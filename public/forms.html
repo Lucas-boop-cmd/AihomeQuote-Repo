@@ -45,6 +45,15 @@
             const realtorForm = document.getElementById('realtor-form');
             const customerForm = document.getElementById('customer-form');
             
+            // Store both parameters in session storage
+            if (agent) {
+                sessionStorage.setItem('currentAgent', agent);
+            }
+            
+            if (lo) {
+                sessionStorage.setItem('currentLO', lo);
+            }
+            
             if (lo && lo.toLowerCase() === 'lucas') {
                 // Show customer form when lo=lucas is in the URL
                 customerForm.classList.remove('hidden');
@@ -64,15 +73,21 @@
                 loadingElement.classList.add('hidden');
             }
             
-            // Store agent param in session storage for potential use later
-            if (agent) {
-                sessionStorage.setItem('currentAgent', agent);
-            }
-            
             // Set up the "Find Out Now" button
             document.querySelector('#find-out-now button').addEventListener('click', function() {
+                // Preserve all URL parameters when taking action
+                const currentParams = new URLSearchParams(window.location.search);
+                
+                // Fill in parameters from session storage if they don't exist in URL
+                if (!currentParams.has('agent') && sessionStorage.getItem('currentAgent')) {
+                    currentParams.set('agent', sessionStorage.getItem('currentAgent'));
+                }
+                
+                if (!currentParams.has('lo') && sessionStorage.getItem('currentLO')) {
+                    currentParams.set('lo', sessionStorage.getItem('currentLO'));
+                }
+                
                 // Add your desired action for the button here
-                // For example, this could scroll to a specific section or trigger a form submission
                 if (formType === 'realtor') {
                     // Scroll to the realtor form
                     document.getElementById('realtor-form').scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +95,27 @@
                     // Scroll to the customer form
                     document.getElementById('customer-form').scrollIntoView({ behavior: 'smooth' });
                 }
+                
+                // You can also update the URL without refreshing to preserve parameters
+                const newUrl = `${window.location.pathname}?${currentParams.toString()}`;
+                window.history.replaceState({}, '', newUrl);
             });
+            
+            // Add form parameter data to iframes if needed
+            const addParamsToIframes = () => {
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(iframe => {
+                    if (iframe.src.includes('?')) {
+                        const iframeSrc = new URL(iframe.src);
+                        if (agent) iframeSrc.searchParams.set('agent', agent);
+                        if (lo) iframeSrc.searchParams.set('lo', lo);
+                        iframe.src = iframeSrc.toString();
+                    }
+                });
+            };
+            
+            // Call this function after iframes are loaded
+            setTimeout(addParamsToIframes, 1000);
         });
     </script>
 </body>

@@ -211,8 +211,12 @@
         if (getCardButton) {
             getCardButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'forms.html?form=realtor';
-                // No agent parameter needed here as this is for new realtors
+                // Get all current URL parameters
+                const currentParams = new URLSearchParams(window.location.search);
+                // Make sure form parameter is set to realtor
+                currentParams.set('form', 'realtor');
+                // Navigate with all parameters preserved
+                window.location.href = `forms.html?${currentParams.toString()}`;
             });
         }
 
