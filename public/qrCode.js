@@ -1,18 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the QR code image element
-    const qrCodeImg = document.querySelector('img[alt="QR Code"]');
+    // Add qrcode.js script to the page
+    const qrcodeScript = document.createElement('script');
+    qrcodeScript.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js';
+    qrcodeScript.onload = initQRCode;
+    qrcodeScript.onerror = () => console.error('Failed to load QR code library');
+    document.head.appendChild(qrcodeScript);
     
-    if (qrCodeImg) {
-        // Get the current URL including path
-        const currentUrl = window.location.href;
+    function initQRCode() {
+        // Find the QR code image element
+        const qrCodeImg = document.querySelector('img[alt="QR Code"]');
         
-        // Generate QR code using Google Charts API
-        const qrCodeUrl = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(currentUrl)}&chs=256x256&chld=L|0`;
-        
-        // Set the image source to the QR code URL
-        qrCodeImg.src = qrCodeUrl;
-        console.log('QR Code updated with current URL:', currentUrl);
-    } else {
-        console.error('QR Code image element not found');
+        if (qrCodeImg) {
+            try {
+                // Get the complete current URL including path and query parameters
+                const currentUrl = window.location.href;
+                
+                // Generate QR code directly using qrcode.js
+                QRCode.toDataURL(currentUrl, {
+                    margin: 1,
+                    width: 256,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                })
+                .then(url => {
+                    qrCodeImg.src = url;
+                    console.log('QR Code successfully updated with current URL:', currentUrl);
+                })
+                .catch(err => {
+                    console.error('Error generating QR code:', err);
+                });
+            } catch (error) {
+                console.error('QR Code generation failed:', error);
+            }
+        } else {
+            console.error('QR Code image element not found');
+        }
     }
 });
