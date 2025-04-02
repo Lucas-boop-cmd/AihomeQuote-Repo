@@ -37,6 +37,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const formType = urlParams.get('form');
+            const formId = urlParams.get('formId');
             const agent = urlParams.get('agent');
             const lo = urlParams.get('lo');
             
@@ -45,7 +46,7 @@
             const realtorForm = document.getElementById('realtor-form');
             const customerForm = document.getElementById('customer-form');
             
-            // Store both parameters in session storage
+            // Store parameters in session storage
             if (agent) {
                 sessionStorage.setItem('currentAgent', agent);
             }
@@ -53,6 +54,30 @@
             if (lo) {
                 sessionStorage.setItem('currentLO', lo);
             }
+            
+            // Function to update iframe src with custom form ID
+            const updateFormIframeSrc = (iframeContainer, formId) => {
+                if (!formId) return false;
+                
+                const iframe = iframeContainer.querySelector('iframe');
+                if (iframe) {
+                    // Create a URL object from the iframe src
+                    try {
+                        const iframeSrc = new URL(iframe.src);
+                        // Extract the base URL without the form ID
+                        const baseUrl = iframeSrc.origin + iframeSrc.pathname.split('/').slice(0, -1).join('/');
+                        // Set new src with the custom form ID
+                        iframe.src = `${baseUrl}/${formId}`;
+                        iframe.id = formId;
+                        iframe.title = "Custom Form";
+                        return true;
+                    } catch (e) {
+                        console.error("Error updating iframe src:", e);
+                        return false;
+                    }
+                }
+                return false;
+            };
             
             if (lo && lo.toLowerCase() === 'lucas') {
                 // Show customer form when lo=lucas is in the URL
@@ -62,10 +87,20 @@
                 // Show realtor form
                 realtorForm.classList.remove('hidden');
                 loadingElement.classList.add('hidden');
+                
+                // If a specific formId is provided, update the iframe src
+                if (formId) {
+                    updateFormIframeSrc(realtorForm, formId);
+                }
             } else if (formType === 'customer') {
                 // Show customer form
                 customerForm.classList.remove('hidden');
                 loadingElement.classList.add('hidden');
+                
+                // If a specific formId is provided, update the iframe src
+                if (formId) {
+                    updateFormIframeSrc(customerForm, formId);
+                }
             } else {
                 // Show error if form type is not specified or invalid
                 errorElement.querySelector('span').textContent = 'Invalid or missing form type.';

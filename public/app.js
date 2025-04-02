@@ -227,8 +227,24 @@
                 e.preventDefault();
                 // Get all current URL parameters
                 const currentParams = new URLSearchParams(window.location.search);
+                
                 // Make sure form parameter is set to realtor
                 currentParams.set('form', 'realtor');
+                
+                // If we have an LO profile with a specific realtor form ID, use it
+                if (window.currentLOProfile && window.currentLOProfile.realtorForm) {
+                    currentParams.set('formId', window.currentLOProfile.realtorForm);
+                }
+                
+                // Ensure the LO parameter is preserved if it exists
+                const lo = currentParams.get('lo');
+                if (lo) {
+                    // LO parameter already exists, no need to set it
+                } else if (window.currentLOProfile && sessionStorage.getItem('currentLO')) {
+                    // If no LO in URL but we have one in session storage, use that
+                    currentParams.set('lo', sessionStorage.getItem('currentLO'));
+                }
+                
                 // Navigate with all parameters preserved
                 window.location.href = `forms.html?${currentParams.toString()}`;
             });
