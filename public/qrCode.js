@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const currentUrl = window.location.href;
                 console.log('Generating QR code with full URL details:', currentUrl);
+                console.log('About to call QRCode.toDataURL with currentUrl');
                 QRCode.toDataURL(currentUrl, {
                     margin: 1,
                     width: 256,
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     errorCorrectionLevel: 'H'
                 })
                 .then(url => {
+                    console.log('QRCode.toDataURL resolved. Updating image source.');
                     qrCodeImg.src = url;
                     qrCodeImg.setAttribute('data-url', currentUrl);
                     console.log('QR Code successfully updated with current URL:', currentUrl);
