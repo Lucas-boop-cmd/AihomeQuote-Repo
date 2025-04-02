@@ -23,6 +23,13 @@
 
 // Main application code
 (() => {
+    // Check if we need to handle agent parameter - only proceed if no "lo" parameter is present
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('lo')) {
+        // If "lo" parameter exists, Lo.js will handle it
+        return;
+    }
+    
     // Backup path-based navigation handler
     const handlePathBasedNavigation = () => {
         try {
@@ -69,8 +76,7 @@
     };
 
     const getAgentParameter = () => {
-        const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get('agent');
+        return urlParams.get('agent');
     };
 
     const agent = getAgentParameter();
