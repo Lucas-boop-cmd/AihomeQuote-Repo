@@ -159,8 +159,16 @@
             if (realtorData.forms && realtorData.forms.length > 0) {
                 contactHtml += '<div class="mt-4">';
                 realtorData.forms.forEach(form => {
-                    contactHtml += `<p class="mb-2"><a href="forms.html?form=${encodeURIComponent(form.id)}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">${form.title || 'Complete Form'}</a></p>`;
-                    contactHtml += `<p class="mb-2"><a href="forms.html?form=${encodeURIComponent(form.id)}&agent=${encodeURIComponent(agent)}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">${form.title || 'Complete Form'}</a></p>`;
+                    // Get current URL parameters
+                    const currentParams = new URLSearchParams(window.location.search);
+                    // Set the form ID parameter
+                    currentParams.set('form', form.id);
+                    // Make sure agent parameter is included
+                    if (agent) {
+                        currentParams.set('agent', agent);
+                    }
+                    // Create form URL with all parameters preserved
+                    contactHtml += `<p class="mb-2"><a href="forms.html?${currentParams.toString()}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">${form.title || 'Complete Form'}</a></p>`;
                 });
                 contactHtml += '</div>';
             }
