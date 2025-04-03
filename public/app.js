@@ -23,12 +23,9 @@
 
 // Main application code
 (() => {
-    // Check if we need to handle agent parameter - only proceed if no "lo" parameter is present
+    // Check if we need to handle agent parameter
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('lo')) {
-        // If "lo" parameter exists, Lo.js will handle it
-        return;
-    }
+    const agent = urlParams.get('agent');
     
     // Backup path-based navigation handler
     const handlePathBasedNavigation = () => {
@@ -59,27 +56,35 @@
     // Double-check with the backup handler
     if (handlePathBasedNavigation()) return;
 
-    // Get API base URL from environment or set a default
+    // Get API base URL based on LO profile or hardcoded fallbacks
     const getApiBaseUrl = () => {
-        // Check if we have a global variable (set by the hosting environment)
-        if (typeof window.REACT_APP_API_BASE_URL !== 'undefined') {
-            return window.REACT_APP_API_BASE_URL;
+        // First priority: Check if we have the current LO profile with an API URL
+        if (window.currentLOProfile && window.currentLOProfile.apiUrl) {
+            console.log('Using API URL from LO profile:', window.currentLOProfile.apiUrl);
+            return window.currentLOProfile.apiUrl;
+        }
+        
+        // Second priority: Fallback to hardcoded values based on LO parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const lo = urlParams.get('lo');
+        if (lo) {
+            if (lo === 'brandon') {
+                console.log('Using Brandon API URL from hardcoded fallback');
+                return 'https://brandon-bluebubbles-middleware-jo7b.onrender.com';
+            } else if (lo === 'lucas') {
+                console.log('Using Lucas API URL from hardcoded fallback');
+                return 'https://bluebubbles-middleware.onrender.com';
+            }
         }
 
-        // Try some bundlers do this
-        if (window.env && window.env.REACT_APP_API_BASE_URL) {
-            return window.env.REACT_APP_API_BASE_URL;
-        }
-
-        // Fallback to hardcoded value
+        // Final fallback to default API URL
+        console.log('Using default API URL fallback');
         return 'https://bluebubbles-middleware.onrender.com';
     };
 
     const getAgentParameter = () => {
         return urlParams.get('agent');
     };
-
-    const agent = getAgentParameter();
 
     const callRealtorHandler = async (agentName) => {
         try {
@@ -225,7 +230,9 @@
         if (getCardButton) {
             getCardButton.addEventListener('click', (e) => {
                 e.preventDefault();
+                // Get all current URL parameters
                 const currentParams = new URLSearchParams(window.location.search);
+                
                 // Always preserve agent from URL or sessionStorage
                 if (!currentParams.has('agent') && sessionStorage.getItem('currentAgent')) {
                     currentParams.set('agent', sessionStorage.getItem('currentAgent'));
@@ -234,13 +241,15 @@
                 if (!currentParams.has('lo') && sessionStorage.getItem('currentLO')) {
                     currentParams.set('lo', sessionStorage.getItem('currentLO'));
                 }
-                // If no agent parameter is present, force the Realtor form based on LO profile
+                
+                // If no agent parameter is present, use the Realtor form based on LO profile
                 if (!currentParams.has('agent')) {
                     currentParams.set('form', 'realtor');
                     if (window.currentLOProfile && window.currentLOProfile.realtorForm) {
                         currentParams.set('formId', window.currentLOProfile.realtorForm);
                     }
                 }
+                
                 window.location.href = `forms.html?${currentParams.toString()}`;
             });
         }
@@ -256,11 +265,13 @@
     };
 
     const setupPrimaryButtons = () => {
-        const urlParams = new URLSearchParams(window.location.search);
         document.querySelectorAll('.primary-button').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Get all current URL parameters to preserve them
                 const currentParams = new URLSearchParams(window.location.search);
+                
                 if (currentParams.has('agent')) {
                     // Option 2: Agent & LO parameters: use LO lead form.
                     currentParams.set('form', 'customer');
@@ -274,6 +285,7 @@
                         currentParams.set('formId', window.currentLOProfile.realtorForm);
                     }
                 }
+                
                 window.location.href = 'forms.html?' + currentParams.toString();
             });
         });

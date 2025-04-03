@@ -40,7 +40,12 @@
             const realtorForm = document.getElementById('realtor-form');
             const customerForm = document.getElementById('customer-form');
             
-            // Store parameters in session storage
+            // Store ALL parameters in session storage
+            urlParams.forEach((value, key) => {
+                sessionStorage.setItem(`current_${key}`, value);
+            });
+            
+            // Also store specific common parameters for backwards compatibility
             if (agent) {
                 sessionStorage.setItem('currentAgent', agent);
             }
@@ -49,7 +54,7 @@
                 sessionStorage.setItem('currentLO', lo);
             }
             
-            // Function to update iframe src with custom form ID
+            // Function to update iframe src with custom form ID and parameters
             const updateFormIframeSrc = (iframeContainer, formId) => {
                 if (!formId) return false;
                 
@@ -102,14 +107,23 @@
                 loadingElement.classList.add('hidden');
             }
             
-            // Add form parameter data to iframes if needed
+            // Add ALL parameters to iframes, not just agent and lo
             const addParamsToIframes = () => {
                 const iframes = document.querySelectorAll('iframe');
                 iframes.forEach(iframe => {
                     if (iframe.src.includes('?')) {
                         const iframeSrc = new URL(iframe.src);
-                        if (agent) iframeSrc.searchParams.set('agent', agent);
-                        if (lo) iframeSrc.searchParams.set('lo', lo);
+                        // Add all URL parameters to iframe src
+                        urlParams.forEach((value, key) => {
+                            iframeSrc.searchParams.set(key, value);
+                        });
+                        iframe.src = iframeSrc.toString();
+                    } else {
+                        // If no query string exists, add one with all parameters
+                        const iframeSrc = new URL(iframe.src);
+                        urlParams.forEach((value, key) => {
+                            iframeSrc.searchParams.set(key, value);
+                        });
                         iframe.src = iframeSrc.toString();
                     }
                 });
