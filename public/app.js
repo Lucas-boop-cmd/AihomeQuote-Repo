@@ -225,27 +225,22 @@
         if (getCardButton) {
             getCardButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Get all current URL parameters
                 const currentParams = new URLSearchParams(window.location.search);
-                
-                // Make sure form parameter is set to realtor
-                currentParams.set('form', 'realtor');
-                
-                // If we have an LO profile with a specific realtor form ID, use it
-                if (window.currentLOProfile && window.currentLOProfile.realtorForm) {
-                    currentParams.set('formId', window.currentLOProfile.realtorForm);
+                // Always preserve agent from URL or sessionStorage
+                if (!currentParams.has('agent') && sessionStorage.getItem('currentAgent')) {
+                    currentParams.set('agent', sessionStorage.getItem('currentAgent'));
                 }
-                
-                // Ensure the LO parameter is preserved if it exists
-                const lo = currentParams.get('lo');
-                if (lo) {
-                    // LO parameter already exists, no need to set it
-                } else if (window.currentLOProfile && sessionStorage.getItem('currentLO')) {
-                    // If no LO in URL but we have one in session storage, use that
+                // Always preserve lo from URL or sessionStorage
+                if (!currentParams.has('lo') && sessionStorage.getItem('currentLO')) {
                     currentParams.set('lo', sessionStorage.getItem('currentLO'));
                 }
-                
-                // Navigate with all parameters preserved
+                // If no agent parameter is present, force the Realtor form based on LO profile
+                if (!currentParams.has('agent')) {
+                    currentParams.set('form', 'realtor');
+                    if (window.currentLOProfile && window.currentLOProfile.realtorForm) {
+                        currentParams.set('formId', window.currentLOProfile.realtorForm);
+                    }
+                }
                 window.location.href = `forms.html?${currentParams.toString()}`;
             });
         }
