@@ -26,11 +26,11 @@
     </div>
 
     <!-- Update script paths to use absolute paths to prevent URL manipulation issues -->
-    <script src="/Lo.js"></script>
-    <script src="/app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <script src="/qrCode.js"></script>
-    <script>
+    <script data-cfasync="false" src="/Lo.js"></script>
+    <script data-cfasync="false" src="/app.js"></script>
+    <script data-cfasync="false" src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script data-cfasync="false" src="/qrCode.js"></script>
+    <script data-cfasync="false">
       // Card loading and display logic
       document.addEventListener("DOMContentLoaded", function(){
         const params = new URLSearchParams(window.location.search);
