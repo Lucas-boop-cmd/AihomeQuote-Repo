@@ -256,27 +256,25 @@
     };
 
     const setupPrimaryButtons = () => {
-        // Find all elements with class "primary-button"
-        const primaryButtons = document.querySelectorAll('.primary-button');
-        
-        // Add click event listener to each button
-        primaryButtons.forEach(button => {
+        const urlParams = new URLSearchParams(window.location.search);
+        document.querySelectorAll('.primary-button').forEach(button => {
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                
-                // Get all current URL parameters
                 const currentParams = new URLSearchParams(window.location.search);
-                
-                // Create URL string for forms.html with all current parameters
-                let formsUrl = 'forms.html';
-                const paramString = currentParams.toString();
-                
-                if (paramString) {
-                    formsUrl += '?' + paramString;
+                if (currentParams.has('agent')) {
+                    // Option 2: Agent & LO parameters: use LO lead form.
+                    currentParams.set('form', 'customer');
+                    if (window.currentLOProfile && window.currentLOProfile.leadForm) {
+                        currentParams.set('formId', window.currentLOProfile.leadForm);
+                    }
+                } else {
+                    // Option 1: Only LO parameter: use LO realtor form.
+                    currentParams.set('form', 'realtor');
+                    if (window.currentLOProfile && window.currentLOProfile.realtorForm) {
+                        currentParams.set('formId', window.currentLOProfile.realtorForm);
+                    }
                 }
-                
-                // Navigate to forms.html with the parameters
-                window.location.href = formsUrl;
+                window.location.href = 'forms.html?' + currentParams.toString();
             });
         });
     };

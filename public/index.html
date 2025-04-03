@@ -82,12 +82,6 @@
           document.getElementById("default-view")?.classList.remove("hidden");
           document.getElementById("realtor-card")?.classList.add("hidden");
         }
-        
-        // Update forms page links with all URL parameters
-        const getCardButton = document.getElementById("get-card-button");
-        if(getCardButton){
-          getCardButton.href = "forms.html?" + params.toString();
-        }
       });
     </script>
 </body>
