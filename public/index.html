@@ -68,5 +68,27 @@
     <script src="app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script src="qrCode.js"></script>
+    <script>
+      // Handle URL parameters for agent and Lo
+      document.addEventListener("DOMContentLoaded", function(){
+        const params = new URLSearchParams(window.location.search);
+        const agentParam = params.get("agent");
+        // If agent parameter exists, show realtor card and hide default view.
+        if (agentParam) {
+          document.getElementById("realtor-card")?.classList.remove("hidden");
+          document.getElementById("default-view")?.classList.add("hidden");
+        } else {
+          // Otherwise, show default view and hide realtor card.
+          document.getElementById("default-view")?.classList.remove("hidden");
+          document.getElementById("realtor-card")?.classList.add("hidden");
+        }
+        
+        // Update forms page links with all URL parameters
+        const getCardButton = document.getElementById("get-card-button");
+        if(getCardButton){
+          getCardButton.href = "forms.html?" + params.toString();
+        }
+      });
+    </script>
 </body>
 </html>
