@@ -25,10 +25,11 @@
         <div id="card-container"></div>
     </div>
 
-    <script src="Lo.js"></script>
-    <script src="app.js"></script>
+    <!-- Update script paths to use absolute paths to prevent URL manipulation issues -->
+    <script src="/Lo.js"></script>
+    <script src="/app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <script src="qrCode.js"></script>
+    <script src="/qrCode.js"></script>
     <script>
       // Card loading and display logic
       document.addEventListener("DOMContentLoaded", function(){
@@ -46,21 +47,21 @@
             // Priority: Agent parameter overrides LO parameter if both exist
             if (agentParam) {
               // If agent parameter exists, always show realtor card regardless of LO parameter
-              const response = await fetch('realtorCard.html');
+              const response = await fetch('/realtorCard.html');
               const html = await response.text();
               cardContainer.innerHTML = html;
               // app.js will handle populating the realtor data
             } 
             // If only LO parameter exists (no agent), show LO card
             else if (loParam) {
-              const response = await fetch('LoCard.html');
+              const response = await fetch('/LoCard.html');
               const html = await response.text();
               cardContainer.innerHTML = html;
               // Lo.js will handle populating the LO data
             } 
             // Default fallback: show LO card with default profile
             else {
-              const response = await fetch('LoCard.html');
+              const response = await fetch('/LoCard.html');
               const html = await response.text();
               cardContainer.innerHTML = html;
             }

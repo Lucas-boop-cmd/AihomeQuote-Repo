@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.setItem('currentLeadForm', loProfile.leadForm);
         }
         
+
         // Store the LO parameter for later use
         const lo = getLOParameter();
         if (lo) {

@@ -4,7 +4,21 @@
         const url = new URL(window.location.href);
         const pathSegments = url.pathname.split("/").filter(Boolean);
         
-        if (pathSegments.length >= 1 && url.pathname !== '/') {
+        // Skip redirection for resource requests (scripts, stylesheets, images, etc.)
+        // Check both file extensions and query parameters
+        const commonFileExtensions = ['.js', '.css', '.html', '.jpg', '.png', '.svg', '.ico', '.gif', '.woff', '.woff2'];
+        const isFileRequest = (
+            // Check if the URL has a file extension
+            (pathSegments.length > 0 && 
+                commonFileExtensions.some(ext => pathSegments[pathSegments.length-1].toLowerCase().endsWith(ext))) ||
+            // Check if this is a script URL with query parameter (e.g., /?lo=script.js)
+            (url.search && url.search.indexOf('.js') > -1) ||
+            // Check if pathname contains scripts, css, or other resource directories
+            (url.pathname.includes('/scripts/') || url.pathname.includes('/css/') || 
+             url.pathname.includes('/images/') || url.pathname.includes('/assets/'))
+        );
+        
+        if (pathSegments.length >= 1 && url.pathname !== '/' && !isFileRequest) {
             const lo = pathSegments[0];
             console.log('Early redirect: Path segment detected:', lo);
             
@@ -33,7 +47,17 @@
             const url = new URL(window.location.href);
             const pathSegments = url.pathname.split("/").filter(Boolean);
             
-            if (pathSegments.length >= 1 && url.pathname !== '/') {
+            // Skip redirection for resource requests using the same logic as above
+            const commonFileExtensions = ['.js', '.css', '.html', '.jpg', '.png', '.svg', '.ico', '.gif', '.woff', '.woff2'];
+            const isFileRequest = (
+                (pathSegments.length > 0 && 
+                    commonFileExtensions.some(ext => pathSegments[pathSegments.length-1].toLowerCase().endsWith(ext))) ||
+                (url.search && url.search.indexOf('.js') > -1) ||
+                (url.pathname.includes('/scripts/') || url.pathname.includes('/css/') || 
+                 url.pathname.includes('/images/') || url.pathname.includes('/assets/'))
+            );
+            
+            if (pathSegments.length >= 1 && url.pathname !== '/' && !isFileRequest) {
                 const lo = pathSegments[0];
                 console.log('Backup handler: Path segment detected:', lo);
                 
