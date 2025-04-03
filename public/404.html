@@ -10,6 +10,19 @@
       try {
         // Get path segments
         var path = window.location.pathname;
+        
+        // Check if this is a file request that should not be redirected
+        var commonFileExtensions = ['.js', '.css', '.html', '.jpg', '.png', '.svg', '.ico', '.gif', '.woff', '.woff2'];
+        var isFileRequest = commonFileExtensions.some(function(ext) {
+          return path.toLowerCase().endsWith(ext);
+        });
+        
+        // Don't redirect file requests
+        if (isFileRequest) {
+          console.log('404 redirect: Detected file request, not redirecting:', path);
+          return;
+        }
+        
         var segments = path.split('/').filter(function(segment) {
           return segment.length > 0;
         });
