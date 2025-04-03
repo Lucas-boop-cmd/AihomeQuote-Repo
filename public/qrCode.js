@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log("Found element 'qrcode'. Generating QR code using new QRCode() constructor...");
     new QRCode(qrDiv, {
       text: currentUrl,
-      width: 256,
-      height: 256,
+      width: 40,
+      height: 40,
       colorDark: "#000",
       colorLight: "#fff",
       correctLevel: QRCode.CorrectLevel.H
