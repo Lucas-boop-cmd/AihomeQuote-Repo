@@ -33,10 +33,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add more LO profiles here following the same format
     };
 
-    // Get the LO parameter from the URL
+    // Get the LO parameter from the URL with validation
     function getLOParameter() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('lo');
+        let lo = urlParams.get('lo');
+        // Ignore if the parameter value looks like a JS filename
+        if (lo && lo.endsWith('.js')) {
+            lo = null;
+        }
+        return lo;
     }
 
     // Update the LO card with the specified LO's information
