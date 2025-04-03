@@ -13,19 +13,19 @@
             <h1 class="text-3xl font-bold text-blue-600">AI Home Quote</h1>
         </header>
 
-        <!-- Cards Container with both LO and Realtor cards -->
+        <!-- Cards Container with both LO and Realtor cards; both hidden initially -->
         <div id="cards">
             <!-- LO Card (from LoCard.html) -->
-            <div id="lo-card" class="bg-white rounded-lg shadow-lg p-6 mt-4">
+            <div id="lo-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="mb-6 md:mb-0 md:mr-8 relative">
-            <img id="lo-headshot" src="placeholder-image.jpg" alt="Loan Officer" class="w-48 h-48 rounded-full object-cover shadow-md">
+                        <img id="lo-headshot" src="placeholder-image.jpg" alt="Loan Officer" class="w-48 h-48 rounded-full object-cover shadow-md">
                         <img id="qr-code-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0id2hpdGUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TG9hZGluZyBRUiBjb2RlLi4uPC90ZXh0Pjwvc3ZnPg==" alt="QR Code" class="absolute bottom-0 right-0 w-16 h-16">
                     </div>
                     <div class="text-center md:text-left">
                         <h2 id="lo-name" class="text-3xl font-bold mb-3">Loan Officer Name</h2>
                         <p id="lo-phone" class="text-gray-600 mb-4">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
-            <p class="text-gray-700 mb-4">
+                        <p class="text-gray-700 mb-4">
                             Get your custom AI home quote card to preapprove your clients.
                         </p>
                         <a href="#" id="get-card-button" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 mt-2">
@@ -33,10 +33,10 @@
                         </a>
                     </div>
                 </div>
-        </div>
+            </div>
 
-        <!-- Realtor Card (from realtorCard.html) -->
-            <div id="realtor-card" class="bg-white rounded-lg shadow-lg p-6 mt-4">
+            <!-- Realtor Card (from realtorCard.html) -->
+            <div id="realtor-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="mb-4 md:mb-0 md:mr-6">
                         <img id="realtor-headshot" src="placeholder-image.jpg" alt="Realtor" class="w-32 h-32 rounded-full object-cover">
@@ -47,7 +47,7 @@
                             <!-- Contact information will be populated here -->
                         </div>
                         <div class="mt-4">
-            <a href="#" id="find-out-button" class="primary-button inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                            <a href="#" id="find-out-button" class="primary-button inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
                                 Find Out Now
                             </a>
                         </div>
@@ -56,7 +56,34 @@
             </div>
         </div>
     </div>
+
     <!-- Include LO initialization if needed -->
     <script data-cfasync="false" src="/Lo.js"></script>
-    </body>
+    
+    <!-- Conditional display script -->
+    <script data-cfasync="false">
+    // When DOM is loaded, show the correct card based on URL parameters.
+    document.addEventListener("DOMContentLoaded", function(){
+        const params = new URLSearchParams(window.location.search);
+        const lo = params.get("lo");
+        const agent = params.get("agent");
+        // If LO parameter exists:
+        if(lo) {
+            if(agent) {
+                // Show Realtor card if agent exists alongside LO.
+                document.getElementById("realtor-card").style.display = "block";
+                document.getElementById("lo-card").style.display = "none";
+            } else {
+                // Show LO card if only LO parameter exists.
+                document.getElementById("lo-card").style.display = "block";
+                document.getElementById("realtor-card").style.display = "none";
+            }
+        } else {
+            // Default: show LO card.
+            document.getElementById("lo-card").style.display = "block";
+            document.getElementById("realtor-card").style.display = "none";
+        }
+    });
+    </script>
+</body>
 </html>
