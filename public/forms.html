@@ -24,12 +24,6 @@
         <div id="customer-form" class="hidden">
             <iframe src="https://api.leadconnectorhq.com/widget/survey/ZdxUZnijqVITonoQQHBQ" style="border:none;width:100%;" scrolling="no" id="ZdxUZnijqVITonoQQHBQ" title="New Lucas Payment calculator"></iframe>
         </div>
-        
-        <div id="find-out-now" class="mt-6 text-center">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Find Out Now
-            </button>
-        </div>
     </div>
     
     <script src="https://link.msgsndr.com/js/form_embed.js"></script>
@@ -107,34 +101,6 @@
                 errorElement.classList.remove('hidden');
                 loadingElement.classList.add('hidden');
             }
-            
-            // Set up the "Find Out Now" button
-            document.querySelector('#find-out-now button').addEventListener('click', function() {
-                // Preserve all URL parameters when taking action
-                const currentParams = new URLSearchParams(window.location.search);
-                
-                // Fill in parameters from session storage if they don't exist in URL
-                if (!currentParams.has('agent') && sessionStorage.getItem('currentAgent')) {
-                    currentParams.set('agent', sessionStorage.getItem('currentAgent'));
-                }
-                
-                if (!currentParams.has('lo') && sessionStorage.getItem('currentLO')) {
-                    currentParams.set('lo', sessionStorage.getItem('currentLO'));
-                }
-                
-                // Add your desired action for the button here
-                if (formType === 'realtor') {
-                    // Scroll to the realtor form
-                    document.getElementById('realtor-form').scrollIntoView({ behavior: 'smooth' });
-                } else if (formType === 'customer') {
-                    // Scroll to the customer form
-                    document.getElementById('customer-form').scrollIntoView({ behavior: 'smooth' });
-                }
-                
-                // You can also update the URL without refreshing to preserve parameters
-                const newUrl = `${window.location.pathname}?${currentParams.toString()}`;
-                window.history.replaceState({}, '', newUrl);
-            });
             
             // Add form parameter data to iframes if needed
             const addParamsToIframes = () => {
