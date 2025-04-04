@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Home Quote</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Added QR code library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- QR code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
+    <!-- Load scripts with direct paths -->
+    <script src="/Lo.js"></script>
+    <script src="/app.js"></script>
+    <script src="/qrCode.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -66,12 +70,6 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script data-cfasync="false" src="./Lo.js"></script>
-    <script data-cfasync="false" src="./app.js"></script>
-    <!-- Added QR Code script -->
-    <script data-cfasync="false" src="./qrCode.js"></script>
-    
     <!-- Card display logic -->
     <script data-cfasync="false">
         document.addEventListener("DOMContentLoaded", function() {

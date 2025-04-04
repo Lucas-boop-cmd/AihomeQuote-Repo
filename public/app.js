@@ -5,21 +5,36 @@
         const params = new URLSearchParams(window.location.search);
         const pathSegments = url.pathname.split("/").filter(Boolean);
         const commonFileExtensions = ['.js', '.css', '.html', '.jpg', '.png', '.svg', '.ico', '.gif', '.woff', '.woff2'];
-        const isFileRequest = (
-            (pathSegments.length > 0 && 
-                commonFileExtensions.some(ext => pathSegments[pathSegments.length-1].toLowerCase().endsWith(ext))) ||
-            (url.search && url.search.indexOf('.js') > -1) ||
-            (url.pathname.includes('/scripts/') || url.pathname.includes('/css/') ||
-             url.pathname.includes('/images/') || url.pathname.includes('/assets/'))
-        );
         
-        // Skip redirect if "lo" param exists and appears to reference a JS file
-        if (params.has('lo') && params.get('lo').toLowerCase().endsWith('.js')) {
-            console.log("Detected lo param ending with .js, skipping early redirect");
+        // Check script request indicators more thoroughly
+        const isScriptRequest = 
+            // Direct script extensions check
+            commonFileExtensions.some(ext => url.pathname.toLowerCase().endsWith(ext)) ||
+            // Check if lo parameter is a JavaScript file
+            (params.has('lo') && params.get('lo').toLowerCase().endsWith('.js')) ||
+            // Check if any parameter ends with .js
+            Array.from(params.entries()).some(([_, value]) => value.toLowerCase().endsWith('.js')) ||
+            // Check script-related paths
+            url.pathname.includes('/scripts/') || 
+            url.pathname.includes('/js/');
+        
+        // Log detailed debug information
+        console.log("Early redirect check:", {
+            url: url.toString(),
+            pathname: url.pathname,
+            search: url.search,
+            loParam: params.get('lo'),
+            isScriptRequest
+        });
+            
+        // Skip ALL redirects if this appears to be a script request
+        if (isScriptRequest) {
+            console.log("Detected script request, skipping early redirect");
             return;
         }
         
-        if (pathSegments.length >= 1 && url.pathname !== '/' && !isFileRequest) {
+        // Continue with normal path segment handling for non-script requests
+        if (pathSegments.length >= 1 && url.pathname !== '/' && !isScriptRequest) {
             const lo = pathSegments[0];
             console.log('Early redirect: Path segment detected:', lo);
             if (!params.has('lo')) {

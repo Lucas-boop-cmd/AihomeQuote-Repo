@@ -1,4 +1,24 @@
 <IfModule mod_mime.c>
-# Ensure JavaScript files are served with the correct MIME type
+# Ensure proper MIME types are set for JavaScript files
 AddType application/javascript .js
+</IfModule>
+
+# Allow script access
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# Redirect handling for clean URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Don't apply rules to actual files and directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Skip redirect for script files
+    RewriteCond %{REQUEST_URI} !\.(js|css|png|jpg|gif|ico)$
+    
+    # Redirect paths to parameters for non-file URLs
+    RewriteRule ^([^/]+)/?$ /?lo=$1 [QSA,L]
 </IfModule>
