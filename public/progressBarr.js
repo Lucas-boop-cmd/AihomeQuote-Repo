@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make container position relative
             container.style.position = 'relative';
             
-            // Left side overlay for back button - MOVED 60px LOWER and WIDER (140px)
+            // Left side overlay for back button
             const leftOverlay = document.createElement('div');
             leftOverlay.className = 'form-nav-overlay left-overlay';
-            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;'; // Wider
+            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; pointer-events: none; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;';
             leftOverlay.title = 'Previous';
             leftOverlay.id = 'prev-overlay';
             
@@ -109,57 +109,81 @@ document.addEventListener("DOMContentLoaded", function () {
                 leftOverlay.style.display = 'none';
             }
             
-            leftOverlay.addEventListener('click', function(e) {
-                console.log("👈 Left overlay clicked, attempting to go back");
-                e.preventDefault();
-                if (currentSlide > 1) {
-                    currentSlide--;
-                    console.log("  🔙 Decremented currentSlide to", currentSlide);
-                    updateProgressBar();
-                    
-                    // Hide left overlay if we're now on the first slide
-                    if (currentSlide === 1) {
-                        document.querySelectorAll('.left-overlay').forEach(el => {
-                            el.style.display = 'none';
-                        });
-                    }
-                } else {
-                    console.log("  ⛔ Already at first slide, cannot go back");
-                }
-            });
-            
-            // Right side overlay for next button - MOVED 60px LOWER and WIDER (140px)
+            // Right side overlay for next button
             const rightOverlay = document.createElement('div');
             rightOverlay.className = 'form-nav-overlay right-overlay';
-            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;'; // Wider
+            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; pointer-events: none; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;';
             rightOverlay.title = 'Next';
-            rightOverlay.addEventListener('click', function(e) {
-                console.log("👉 Right overlay clicked, attempting to go forward");
-                e.preventDefault();
-                if (currentSlide < totalSlides) {
-                    currentSlide++;
-                    console.log("  🔜 Incremented currentSlide to", currentSlide);
-                    updateProgressBar();
-                    
-                    // Show left overlay if we're no longer on the first slide
-                    if (currentSlide > 1) {
-                        document.querySelectorAll('.left-overlay').forEach(el => {
-                            el.style.display = 'block';
-                        });
-                    }
-                } else {
-                    console.log("  ⛔ Already at last slide, cannot go further");
-                }
-            });
             
             container.appendChild(leftOverlay);
-            console.log("   ✅ Added left overlay to container");
-            
             container.appendChild(rightOverlay);
-            console.log("   ✅ Added right overlay to container");
+            console.log("   ✅ Added visual overlays to container (pointer-events: none)");
+            
+            // Find the actual iframe to attach our click handler
+            const iframe = container.querySelector('iframe');
+            if (iframe) {
+                console.log("   🔍 Found iframe in container, setting up message listener");
+                
+                // We'll update our progress bar based on form navigation from inside the iframe
+                // This doesn't rely on our overlays intercepting clicks
+                
+                // Set up an interval to check for iframe content load
+                const checkInterval = setInterval(() => {
+                    try {
+                        // Just try to access the iframe content to see if it's loaded and same-origin
+                        if (iframe.contentWindow && iframe.contentWindow.document) {
+                            clearInterval(checkInterval);
+                            
+                            try {
+                                // Set up click handlers on the actual form navigation buttons
+                                const iframeDoc = iframe.contentWindow.document;
+                                
+                                // We need to wait a bit for the form to initialize
+                                setTimeout(() => {
+                                    try {
+                                        console.log("   🔄 Attempting to add click handlers to form buttons inside iframe");
+                                        const nextButtons = iframeDoc.querySelectorAll('.ghl-footer-next, .ghl-next-button, [class*="next"]');
+                                        const backButtons = iframeDoc.querySelectorAll('.ghl-footer-back, .ghl-back-button, [class*="back"]');
+                                        
+                                        console.log(`   👉 Found ${nextButtons.length} next buttons and ${backButtons.length} back buttons`);
+                                        
+                                        // Add click listeners to the next buttons
+                                        nextButtons.forEach(btn => {
+                                            btn.addEventListener('click', () => {
+                                                console.log("   🔼 Next button clicked INSIDE iframe");
+                                                if (currentSlide < totalSlides) {
+                                                    currentSlide++;
+                                                    updateProgressBar();
+                                                }
+                                            });
+                                        });
+                                        
+                                        // Add click listeners to the back buttons
+                                        backButtons.forEach(btn => {
+                                            btn.addEventListener('click', () => {
+                                                console.log("   🔽 Back button clicked INSIDE iframe");
+                                                if (currentSlide > 1) {
+                                                    currentSlide--;
+                                                    updateProgressBar();
+                                                }
+                                            });
+                                        });
+                                    } catch (e) {
+                                        console.error("   ❌ Error adding click handlers to buttons:", e);
+                                    }
+                                }, 2000);
+                            } catch (e) {
+                                console.error("   ❌ Error accessing iframe content:", e);
+                            }
+                        }
+                    } catch (e) {
+                        // This is expected for cross-origin iframes
+                    }
+                }, 500);
+            }
         });
         
-        console.log("✅ Overlay buttons created successfully");
+        console.log("✅ Overlay indicators created successfully");
     }
     
     // Update the original updateProgressBar function to control overlay visibility
@@ -212,6 +236,13 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Detect clicks on form navigation buttons or elements that look like navigation
         const target = e.target;
+        
+        // Check if the click was inside an iframe
+        const isInIframe = target.closest('iframe');
+        if (isInIframe) {
+            // We're handling iframe clicks separately, so we can skip here
+            return;
+        }
         
         // Next/forward patterns
         if (target.matches('.ghl-footer-next-arrow') || 
@@ -268,6 +299,51 @@ document.addEventListener("DOMContentLoaded", function () {
             updateProgressBar();
         }
     });
+    
+    // Additional function to help with the iframe communication
+    function addIframeMessageListener() {
+        window.addEventListener('message', function(event) {
+            // Listen for our custom messages from iframe
+            if (event.data && typeof event.data === 'object') {
+                if (event.data.type === 'formNavigation') {
+                    if (event.data.direction === 'next' && currentSlide < totalSlides) {
+                        currentSlide++;
+                        updateProgressBar();
+                    } else if (event.data.direction === 'back' && currentSlide > 1) {
+                        currentSlide--;
+                        updateProgressBar();
+                    }
+                }
+            }
+        });
+        
+        // Try to inject navigation tracking code into iframes
+        setTimeout(() => {
+            document.querySelectorAll('iframe').forEach(iframe => {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    const script = document.createElement('script');
+                    script.textContent = `
+                        // Track form navigation and report to parent
+                        document.addEventListener('click', function(e) {
+                            if (e.target.matches('.ghl-footer-next, .ghl-next-button, [class*="next"]') || 
+                                e.target.closest('.ghl-footer-next, .ghl-next-button, [class*="next"]')) {
+                                window.parent.postMessage({type: 'formNavigation', direction: 'next'}, '*');
+                            } else if (e.target.matches('.ghl-footer-back, .ghl-back-button, [class*="back"]') || 
+                                       e.target.closest('.ghl-footer-back, .ghl-back-button, [class*="back"]')) {
+                                window.parent.postMessage({type: 'formNavigation', direction: 'back'}, '*');
+                            }
+                        });
+                    `;
+                    
+                    iframeDoc.body.appendChild(script);
+                } catch (e) {
+                    // Expected for cross-origin iframes
+                }
+            });
+        }, 2000);
+    }
     
     // Manual controls for testing - add debug buttons
     function addDebugControls() {
@@ -326,6 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     setupKeyboardNavigation();
     addDebugControls(); // Add debug controls
+    addIframeMessageListener(); // Add iframe message listener
     
     // Check for completion status periodically
     console.log("🔄 Setting up periodic completion check...");
