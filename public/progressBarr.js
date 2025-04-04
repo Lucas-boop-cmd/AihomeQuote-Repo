@@ -9,16 +9,19 @@ document.addEventListener("DOMContentLoaded", function () {
         let progressBar = document.getElementById("progress-bar");
         let progressText = document.getElementById("progress-text");
         
-        if (progressBar && progressText) {
-            progressBar.style.width = progressPercentage + "%";
-            progressText.textContent = `Step ${currentSlide} of ${totalSlides}`;
-            console.log(`Progress updated: Step ${currentSlide} of ${totalSlides} (${progressPercentage}%)`);
+        if (!progressBar || !progressText) {
+            console.error("Progress bar elements not found in DOM.");
+            return;
         }
+        
+        progressBar.style.width = progressPercentage + "%";
+        progressText.textContent = `Step ${currentSlide} of ${totalSlides}`;
+        console.log(`Progress updated: Step ${currentSlide} of ${totalSlides} (${progressPercentage}%)`);
     }
     
     // Run the function initially
     updateProgressBar();
-
+    
     // Find all iframes and inject event listeners into them
     function setupIframeEventListeners() {
         const iframes = document.querySelectorAll('iframe');
@@ -38,12 +41,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1 && node.tagName === 'IFRAME' && 
-                        !node.hasAttribute('data-progress-monitored')) {
-                        injectEventListeners(node);
-                    }
-                });
+                if (node.nodeType === 1 && node.tagName === 'IFRAME' && 
+!node.hasAttribute('data-progress-monitored')) {
+                    injectEventListeners(node);
+                }
             });
+        });
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
@@ -129,44 +132,44 @@ document.addEventListener("DOMContentLoaded", function () {
     setupIframeEventListeners();
     
     // Also keep the document-level listeners for when the form is not in an iframe
-    document.addEventListener("click", function (event) {
-        if (event.target.matches(".ghl-footer-next-arrow") || 
-            event.target.closest(".ghl-footer-next-arrow")) {
-            console.log("Next button clicked in main document");
-            if (currentSlide < totalSlides) {
-                currentSlide++;
-                updateProgressBar();
+        document.addEventListener("click", function (event) {
+            if (event.target.matches(".ghl-footer-next-arrow") || 
+event.target.closest(".ghl-footer-next-arrow")) {
+                console.log("Next button clicked in main document");
+                    if (currentSlide < totalSlides) {
+                        currentSlide++;
+                        updateProgressBar();
+                    }
+                }
+                else if (event.target.matches(".ghl-footer-back") || 
+event.target.closest(".ghl-footer-back")) {
+                console.log("Back button clicked in main document");
+                    if (currentSlide > 1) {
+                        currentSlide--;
+                        updateProgressBar();
+                                    }
             }
-        }
-        else if (event.target.matches(".ghl-footer-back") || 
-                 event.target.closest(".ghl-footer-back")) {
-            console.log("Back button clicked in main document");
-            if (currentSlide > 1) {
-                currentSlide--;
-                updateProgressBar();
-            }
-        }
-    });
-
-    // Listen for messages from iframes
+        });
+        
+        // Listen for messages from iframes
     window.addEventListener("message", function(event) {
         if (event.data && event.data.action) {
-            console.log('Received message from iframe:', event.data);
+console.log('Received message from iframe:', event.data);
             
             if (event.data.action === 'next') {
                 if (currentSlide < totalSlides) {
-                    currentSlide++;
-                    updateProgressBar();
-                }
+                currentSlide++;
+                updateProgressBar();
+}
             } else if (event.data.action === 'back') {
                 if (currentSlide > 1) {
-                    currentSlide--;
-                    updateProgressBar();
-                }
+                currentSlide--;
+                updateProgressBar();
+}
             } else if (event.data.action === 'setTotal' && event.data.total) {
                 totalSlides = event.data.total;
                 updateProgressBar();
-            }
-        }
+                }
+                        }
+                    });
     });
-});
