@@ -25,13 +25,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Find all iframes and inject event listeners into them
     function setupIframeEventListeners() {
         const iframes = document.querySelectorAll('iframe');
+        console.log(`Found ${iframes.length} iframes on DOMContentLoaded`);
         
         iframes.forEach(iframe => {
             // Wait for iframe to load
             if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+                console.log("Iframe loaded (direct access):", iframe);
                 injectEventListeners(iframe);
             } else {
+                console.log("Setting onload for iframe:", iframe);
                 iframe.onload = function() {
+                    console.log("Iframe onload triggered for:", iframe);
                     injectEventListeners(iframe);
                 };
             }
@@ -41,12 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1 && node.tagName === 'IFRAME' && 
+                    if (node.nodeType === 1 && node.tagName === 'IFRAME' && 
 !node.hasAttribute('data-progress-monitored')) {
-                    injectEventListeners(node);
-                }
+                        console.log("New iframe detected by MutationObserver:", node);
+                        injectEventListeners(node);
+                    }
+                });
             });
-        });
         });
         observer.observe(document.body, { childList: true, subtree: true });
     }
@@ -66,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 (function() {
                     // Function to send message to parent
                     function notifyParent(action) {
+                        console.log("Iframe notifying parent with action:", action);
                         window.parent.postMessage({ action: action }, '*');
                     }
                     
@@ -73,12 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.addEventListener('click', function(e) {
                         if (e.target.matches('.ghl-footer-next-arrow') || 
                             e.target.closest('.ghl-footer-next-arrow')) {
-                            console.log('Next button clicked in iframe');
+                            console.log("Detected click on .ghl-footer-next-arrow inside iframe"); 
                             notifyParent('next');
                         } 
                         else if (e.target.matches('.ghl-footer-back') || 
                                  e.target.closest('.ghl-footer-back')) {
-                            console.log('Back button clicked in iframe');
+                            console.log("Detected click on .ghl-footer-back inside iframe");
                             notifyParent('back');
                         }
                     });
@@ -88,13 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         const footer = document.querySelector('.ghl-footer-buttons');
                         if (footer && footer.hasAttribute('totalslides')) {
                             const total = parseInt(footer.getAttribute('totalslides'), 10) || 5;
-                            notifyParent('setTotal');
+                            console.log("Iframe checkForm: totalslides detected:", total);
                             notifyParent({ action: 'setTotal', total: total });
                             clearInterval(checkForm);
                         }
                     }, 500);
                     
-                    console.log('Event listeners injected into iframe');
+                    console.log("Event listeners injected into iframe");
                 })();
             `;
             
@@ -102,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
             iframeDoc.body.appendChild(script);
         } catch (e) {
             // If direct access fails, use the iframe src to inject the listener
-            console.log('Cannot directly access iframe (likely cross-origin). Using alternative method.');
+            console.error("Direct access to iframe failed:", e);
             
             // Monitor for messages from the iframe
             window.addEventListener('message', function(event) {
@@ -110,16 +116,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log('Received message from iframe:', event.data);
                     
                     if (event.data.action === 'next') {
+                        console.log("Handling 'next' from iframe");
                         if (currentSlide < totalSlides) {
                             currentSlide++;
                             updateProgressBar();
                         }
                     } else if (event.data.action === 'back') {
+                        console.log("Handling 'back' from iframe");
                         if (currentSlide > 1) {
                             currentSlide--;
                             updateProgressBar();
                         }
                     } else if (event.data.action === 'setTotal' && event.data.total) {
+                        console.log("Handling 'setTotal' from iframe. Total:", event.data.total);
                         totalSlides = event.data.total;
                         updateProgressBar();
                     }
@@ -132,44 +141,47 @@ document.addEventListener("DOMContentLoaded", function () {
     setupIframeEventListeners();
     
     // Also keep the document-level listeners for when the form is not in an iframe
-        document.addEventListener("click", function (event) {
-            if (event.target.matches(".ghl-footer-next-arrow") || 
+    document.addEventListener("click", function (event) {
+        console.log("Document click event detected:", event.target);
+        if (event.target.matches(".ghl-footer-next-arrow") || 
 event.target.closest(".ghl-footer-next-arrow")) {
-                console.log("Next button clicked in main document");
-                    if (currentSlide < totalSlides) {
-                        currentSlide++;
-                        updateProgressBar();
-                    }
-                }
-                else if (event.target.matches(".ghl-footer-back") || 
-event.target.closest(".ghl-footer-back")) {
-                console.log("Back button clicked in main document");
-                    if (currentSlide > 1) {
-                        currentSlide--;
-                        updateProgressBar();
-                                    }
-            }
-        });
-        
-        // Listen for messages from iframes
-    window.addEventListener("message", function(event) {
-        if (event.data && event.data.action) {
-console.log('Received message from iframe:', event.data);
-            
-            if (event.data.action === 'next') {
-                if (currentSlide < totalSlides) {
+            console.log("Next button clicked in main document");
+            if (currentSlide < totalSlides) {
                 currentSlide++;
                 updateProgressBar();
-}
-            } else if (event.data.action === 'back') {
-                if (currentSlide > 1) {
+            }
+        }
+        else if (event.target.matches(".ghl-footer-back") || 
+event.target.closest(".ghl-footer-back")) {
+            console.log("Back button clicked in main document");
+            if (currentSlide > 1) {
                 currentSlide--;
                 updateProgressBar();
-}
+            }
+        }
+    });
+    
+    // Listen for messages from iframes
+    window.addEventListener("message", function(event) {
+        console.log("Window received message from iframe:", event.origin, event.data);
+        if (event.data && event.data.action) {
+            if (event.data.action === 'next') {
+                console.log("Handling 'next' from iframe");
+                if (currentSlide < totalSlides) {
+                    currentSlide++;
+                    updateProgressBar();
+                }
+            } else if (event.data.action === 'back') {
+                console.log("Handling 'back' from iframe");
+                if (currentSlide > 1) {
+                    currentSlide--;
+                    updateProgressBar();
+                }
             } else if (event.data.action === 'setTotal' && event.data.total) {
+                console.log("Handling 'setTotal' from iframe. Total:", event.data.total);
                 totalSlides = event.data.total;
                 updateProgressBar();
-                }
-                        }
-                    });
+            }
+        }
     });
+});
