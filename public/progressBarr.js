@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Set up click listeners for the form navigation buttons
                     document.addEventListener('click', function(e) {
                         if (e.target.matches('.ghl-btn ghl-footer-next') || 
-                            e.target.closest('.ghl-footer-next-arrow')) {
+                            e.target.closest('.ghl-btn ghl-footer-back')) {
                             console.log("Detected click on .ghl-footer-next-arrow inside iframe"); 
                             notifyParent('next');
                         } 
@@ -165,23 +165,36 @@ event.target.closest(".ghl-footer-back")) {
     window.addEventListener("message", function(event) {
         console.log("Window received message from iframe:", event.origin, event.data);
         if (event.data && event.data.action) {
+            console.log("Before handling message, currentSlide:", currentSlide, "totalSlides:", totalSlides);
             if (event.data.action === 'next') {
                 console.log("Handling 'next' from iframe");
                 if (currentSlide < totalSlides) {
                     currentSlide++;
+                    console.log("After 'next', currentSlide now:", currentSlide);
                     updateProgressBar();
+                } else {
+                    console.log("'next' received but currentSlide already at max");
                 }
             } else if (event.data.action === 'back') {
                 console.log("Handling 'back' from iframe");
                 if (currentSlide > 1) {
                     currentSlide--;
+                    console.log("After 'back', currentSlide now:", currentSlide);
                     updateProgressBar();
+                } else {
+                    console.log("'back' received but currentSlide already at min");
                 }
             } else if (event.data.action === 'setTotal' && event.data.total) {
-                console.log("Handling 'setTotal' from iframe. Total:", event.data.total);
+                console.log("Handling 'setTotal' from iframe. Received total:", event.data.total);
                 totalSlides = event.data.total;
+                console.log("Updated totalSlides to:", totalSlides, "with currentSlide:", currentSlide);
                 updateProgressBar();
+            } else {
+                console.log("Unrecognized action:", event.data.action);
             }
+            console.log("After handling message, currentSlide:", currentSlide, "totalSlides:", totalSlides);
+        } else {
+            console.log("Received message without valid action:", event.data);
         }
     });
 });
