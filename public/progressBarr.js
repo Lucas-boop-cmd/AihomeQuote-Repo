@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("✅ Overlay buttons created successfully");
     }
 
-    // Helper function to simulate clicking next button in iframe
+    // Helper function to simulate clicking next button in iframe - improved for cross-origin
     function simulateNextClick(iframe) {
         try {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -194,17 +194,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("   ⚠️ Couldn't find next button in iframe");
             }
         } catch (e) {
-            console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
-            // For cross-origin iframes, we'll need to use postMessage
+            console.log("   ⚠️ Cross-origin restriction, using postMessage instead");
+            // Always assume the message was delivered - update our progress bar locally
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateProgressBar();
+            }
+            
+            // For cross-origin iframes, we'll use postMessage but don't wait for confirmation
             try {
-                iframe.contentWindow.postMessage({ action: 'clickNext' }, '*');
+                iframe.contentWindow.postMessage({ 
+                    action: 'clickNext',
+                    source: 'progressBarr' 
+                }, '*');
             } catch (e2) {
                 console.error("   ❌ Error sending message to iframe:", e2);
             }
         }
     }
 
-    // Helper function to simulate clicking back button in iframe
+    // Helper function to simulate clicking back button in iframe - improved for cross-origin
     function simulateBackClick(iframe) {
         try {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -217,19 +226,49 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("   ⚠️ Couldn't find back button in iframe");
             }
         } catch (e) {
-            console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
-            // For cross-origin iframes, we'll need to use postMessage
+            console.log("   ⚠️ Cross-origin restriction, using postMessage instead");
+            // Always assume the message was delivered - update our progress bar locally
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateProgressBar();
+            }
+            
+            // For cross-origin iframes, we'll use postMessage but don't wait for confirmation
             try {
-                iframe.contentWindow.postMessage({ action: 'clickBack' }, '*');
+                iframe.contentWindow.postMessage({ 
+                    action: 'clickBack',
+                    source: 'progressBarr' 
+                }, '*');
             } catch (e2) {
                 console.error("   ❌ Error sending message to iframe:", e2);
             }
         }
     }
 
-    // Function to inject script into iframe to handle our click messages
+    // Function to inject script into iframe to handle our click messages - improved for cross-origin
     function injectIframeHelper(iframe) {
-        // We need to wait for the iframe to load
+        // For cross-origin iframes, we need to set up message handling before load
+        window.addEventListener('message', function(event) {
+            // Accept messages from any origin for testing
+            if (event.data && typeof event.data === 'object') {
+                console.log("📨 Received message from iframe:", event.data);
+                
+                // Our custom navigation messages
+                if (event.data.type === 'formClicked' || event.data.type === 'formNavigation') {
+                    console.log("🔄 Form navigation detected:", event.data);
+                    
+                    if (event.data.direction === 'next' && currentSlide < totalSlides) {
+                        currentSlide++;
+                        updateProgressBar();
+                    } else if (event.data.direction === 'back' && currentSlide > 1) {
+                        currentSlide--;
+                        updateProgressBar();
+                    }
+                }
+            }
+        });
+        
+        // We still try to inject our script, but don't rely on it working
         iframe.addEventListener('load', function() {
             try {
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -238,9 +277,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 script.innerHTML = `
                     // Listen for messages from parent window
                     window.addEventListener('message', function(event) {
-                        if (event.data && event.data.action) {
+                        if (event.data && event.data.action && event.data.source === 'progressBarr') {
+                            console.log("📢 Received navigation message from parent:", event.data);
                             if (event.data.action === 'clickNext') {
-                                console.log("📢 Received clickNext message from parent");
                                 // Find and click next button
                                 const nextBtn = document.querySelector('.ghl-footer-next, [class*="next"], .ghl-next-button');
                                 if (nextBtn) {
@@ -248,7 +287,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     nextBtn.click();
                                 }
                             } else if (event.data.action === 'clickBack') {
-                                console.log("📢 Received clickBack message from parent");
                                 // Find and click back button
                                 const backBtn = document.querySelector('.ghl-footer-back, [class*="back"], .ghl-back-button');
                                 if (backBtn) {
@@ -261,36 +299,31 @@ document.addEventListener("DOMContentLoaded", function () {
                     
                     // Also watch for form navigation to notify the parent
                     document.addEventListener('click', function(e) {
-                        if (e.target.matches('.ghl-footer-next, [class*="next"], .ghl-next-button') || 
-                            e.target.closest('.ghl-footer-next, [class*="next"], .ghl-next-button')) {
+                        const target = e.target;
+                        const isNextButton = target.matches('.ghl-footer-next, [class*="next"]') || 
+                                          target.closest('.ghl-footer-next, [class*="next"]');
+                        const isBackButton = target.matches('.ghl-footer-back, [class*="back"]') || 
+                                          target.closest('.ghl-footer-back, [class*="back"]');
+                        
+                        if (isNextButton) {
+                            console.log("👆 Next button clicked in iframe");
                             window.parent.postMessage({ type: 'formClicked', direction: 'next' }, '*');
-                        } else if (e.target.matches('.ghl-footer-back, [class*="back"], .ghl-back-button') || 
-                                   e.target.closest('.ghl-footer-back, [class*="back"], .ghl-back-button')) {
+                        } else if (isBackButton) {
+                            console.log("👆 Back button clicked in iframe");
                             window.parent.postMessage({ type: 'formClicked', direction: 'back' }, '*');
                         }
                     });
                     
-                    console.log("🔌 Iframe helper script loaded");
+                    console.log("🔌 Iframe helper script loaded (direct injection)");
                 `;
                 
                 iframeDoc.body.appendChild(script);
-                console.log("✅ Injected helper script into iframe");
+                console.log("✅ Successfully injected helper script into iframe");
             } catch (e) {
-                // Expected for cross-origin iframes
-                console.log("❌ Could not inject script into iframe due to cross-origin restrictions");
-            }
-        });
-        
-        // Also add a listener for form navigation events from the iframe
-        window.addEventListener('message', function(event) {
-            if (event.data && event.data.type === 'formClicked') {
-                if (event.data.direction === 'next' && currentSlide < totalSlides) {
-                    currentSlide++;
-                    updateProgressBar();
-                } else if (event.data.direction === 'back' && currentSlide > 1) {
-                    currentSlide--;
-                    updateProgressBar();
-                }
+                console.log("🔄 Using cross-origin message passing instead of direct injection");
+                
+                // For cross-origin iframes, let's attempt to send messages when the overlay is clicked
+                // The click handlers on the overlays will handle sending messages and updating the progress bar
             }
         });
     }
@@ -508,16 +541,25 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("⏰ Timeout elapsed, creating overlay buttons now");
         createOverlayButtons();
         
-        // Set additional timeout to check for iframes that may load after initial overlay creation
+        // Add additional, longer timeouts to handle slow-loading iframes
         setTimeout(() => {
+            // Look for iframes that may have loaded after initial setup
             const iframes = document.querySelectorAll('iframe');
-            console.log(`🔍 Checking again for iframes... Found ${iframes.length} iframes`);
+            console.log(`🔍 Checking again for iframes... Found ${iframes.length}`);
             
-            if (iframes.length > 0) {
-                iframes.forEach(iframe => {
+            iframes.forEach(iframe => {
+                if (!iframe.hasAttribute('data-progress-monitored')) {
+                    console.log("🔄 Setting up messaging for late-loaded iframe");
+                    iframe.setAttribute('data-progress-monitored', 'true');
                     injectIframeHelper(iframe);
-                });
-            }
+                }
+            });
+            
+            // Improve visibility of overlay buttons for debugging
+            document.querySelectorAll('.form-nav-overlay').forEach(overlay => {
+                // Make overlays more visible while debugging
+                overlay.style.opacity = '0.4';
+            });
         }, 3000);
     }, 1000);
     
