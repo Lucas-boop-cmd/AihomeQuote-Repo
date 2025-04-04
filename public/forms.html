@@ -26,111 +26,129 @@
         </div>
     </div>
 <script src="Lo.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const formType = urlParams.get('form');
-            const formId = urlParams.get('formId');
-            const agent = urlParams.get('agent');
-            const lo = urlParams.get('lo');
-            
-            const loadingElement = document.getElementById('loading');
-            const errorElement = document.getElementById('error-message');
-            const realtorForm = document.getElementById('realtor-form');
-            const customerForm = document.getElementById('customer-form');
-            
-            // Store ALL parameters in session storage
-            urlParams.forEach((value, key) => {
-                sessionStorage.setItem(`current_${key}`, value);
-            });
-            
-            // Also store specific common parameters for backwards compatibility
-            if (agent) {
-                sessionStorage.setItem('currentAgent', agent);
-            }
-            
-            if (lo) {
-                sessionStorage.setItem('currentLO', lo);
-            }
-            
-            // Function to update iframe src with custom form ID and parameters
-            const updateFormIframeSrc = (iframeContainer, formId) => {
-                if (!formId) return false;
-                
-                const iframe = iframeContainer.querySelector('iframe');
-                if (iframe) {
-                    // Create a URL object from the iframe src
-                    try {
-                        const iframeSrc = new URL(iframe.src);
-                        // Extract the base URL without the form ID
-                        const baseUrl = iframeSrc.origin + iframeSrc.pathname.split('/').slice(0, -1).join('/');
-                        // Set new src with the custom form ID
-                        iframe.src = `${baseUrl}/${formId}`;
-                        iframe.id = formId;
-                        iframe.title = "Custom Form";
-                        return true;
-                    } catch (e) {
-                        console.error("Error updating iframe src:", e);
-                        return false;
-                    }
-                }
-                return false;
-            };
-            
-            if (lo && lo.toLowerCase() === 'lucas') {
-                // Show customer form when lo=lucas is in the URL
-                customerForm.classList.remove('hidden');
-                loadingElement.classList.add('hidden');
-            } else if (formType === 'realtor') {
-                // Show realtor form
-                realtorForm.classList.remove('hidden');
-                loadingElement.classList.add('hidden');
-                
-                // If a specific formId is provided, update the iframe src
-                if (formId) {
-                    updateFormIframeSrc(realtorForm, formId);
-                }
-            } else if (formType === 'customer') {
-                // Show customer form
-                customerForm.classList.remove('hidden');
-                loadingElement.classList.add('hidden');
-                
-                // If a specific formId is provided, update the iframe src
-                if (formId) {
-                    updateFormIframeSrc(customerForm, formId);
-                }
-            } else {
-                // Show error if form type is not specified or invalid
-                errorElement.querySelector('span').textContent = 'Invalid or missing form type.';
-                errorElement.classList.remove('hidden');
-                loadingElement.classList.add('hidden');
-            }
-            
-            // Add ALL parameters to iframes, not just agent and lo
-            const addParamsToIframes = () => {
-                const iframes = document.querySelectorAll('iframe');
-                iframes.forEach(iframe => {
-                    if (iframe.src.includes('?')) {
-                        const iframeSrc = new URL(iframe.src);
-                        // Add all URL parameters to iframe src
-                        urlParams.forEach((value, key) => {
-                            iframeSrc.searchParams.set(key, value);
-                        });
-                        iframe.src = iframeSrc.toString();
-                    } else {
-                        // If no query string exists, add one with all parameters
-                        const iframeSrc = new URL(iframe.src);
-                        urlParams.forEach((value, key) => {
-                            iframeSrc.searchParams.set(key, value);
-                        });
-                        iframe.src = iframeSrc.toString();
-                    }
-                });
-            };
-            
-            // Call this function after iframes are loaded
-            setTimeout(addParamsToIframes, 1000);
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const formType = urlParams.get('form');
+        const formId = urlParams.get('formId');
+        const agent = urlParams.get('agent');
+        const lo = urlParams.get('lo');
+        
+        const loadingElement = document.getElementById('loading');
+        const errorElement = document.getElementById('error-message');
+        const realtorForm = document.getElementById('realtor-form');
+        const customerForm = document.getElementById('customer-form');
+        
+        // Store ALL parameters in session storage
+        urlParams.forEach((value, key) => {
+            sessionStorage.setItem(`current_${key}`, value);
         });
-    </script>
+        
+        // Also store specific common parameters for backwards compatibility
+        if (agent) {
+            sessionStorage.setItem('currentAgent', agent);
+        }
+        
+        if (lo) {
+            sessionStorage.setItem('currentLO', lo);
+        }
+        
+        // Determine which form IDs to use based on LO parameter
+        let currentRealtorFormId = "npOQeePCnk9G9Yyqau5U"; // Default realtor form
+        let currentLeadFormId = "ZdxUZnijqVITonoQQHBQ";    // Default customer form
+        
+        // If Lo.js has loaded and provided loProfiles
+        if (lo && window.loProfiles && window.loProfiles[lo]) {
+            const loProfile = window.loProfiles[lo];
+            if (loProfile.realtorForm) currentRealtorFormId = loProfile.realtorForm;
+            if (loProfile.leadForm) currentLeadFormId = loProfile.leadForm;
+        } else {
+            // Fallback to session storage if available
+            const storedRealtorFormId = sessionStorage.getItem('currentRealtorForm');
+            const storedLeadFormId = sessionStorage.getItem('currentLeadForm');
+            if (storedRealtorFormId) currentRealtorFormId = storedRealtorFormId;
+            if (storedLeadFormId) currentLeadFormId = storedLeadFormId;
+        }
+        
+        // Function to update iframe src with custom form ID and parameters
+        const updateFormIframeSrc = (iframeContainer, newFormId) => {
+            if (!newFormId) return false;
+            
+            const iframe = iframeContainer.querySelector('iframe');
+            if (iframe) {
+                // Set the iframe src directly to the leadconnectorhq URL with the form ID
+                iframe.src = `https://api.leadconnectorhq.com/widget/survey/${newFormId}`;
+                iframe.id = newFormId;
+                iframe.title = "Custom Form";
+                return true;
+            }
+            return false;
+        };
+        
+        // Display the appropriate form based on parameters
+        if (lo && lo.toLowerCase() === 'lucas') {
+            // Show customer form when lo=lucas is in the URL
+            customerForm.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+            
+            // Use the proper form ID for this LO
+            updateFormIframeSrc(customerForm, currentLeadFormId);
+        } else if (formType === 'realtor') {
+            // Show realtor form
+            realtorForm.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+            
+            // If a specific formId is provided in URL, it takes precedence
+            if (formId) {
+                updateFormIframeSrc(realtorForm, formId);
+            } else {
+                // Otherwise use the one from LO profile
+                updateFormIframeSrc(realtorForm, currentRealtorFormId);
+            }
+        } else if (formType === 'customer') {
+            // Show customer form
+            customerForm.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+            
+            // If a specific formId is provided in URL, it takes precedence
+            if (formId) {
+                updateFormIframeSrc(customerForm, formId);
+            } else {
+                // Otherwise use the one from LO profile
+                updateFormIframeSrc(customerForm, currentLeadFormId);
+            }
+        } else {
+            // Show error if form type is not specified or invalid
+            errorElement.querySelector('span').textContent = 'Invalid or missing form type.';
+            errorElement.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+        }
+        
+        // Add ALL parameters to iframes, not just agent and lo
+        const addParamsToIframes = () => {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                if (iframe.src.includes('?')) {
+                    const iframeSrc = new URL(iframe.src);
+                    // Add all URL parameters to iframe src
+                    urlParams.forEach((value, key) => {
+                        iframeSrc.searchParams.set(key, value);
+                    });
+                    iframe.src = iframeSrc.toString();
+                } else {
+                    // If no query string exists, add one with all parameters
+                    const iframeSrc = new URL(iframe.src);
+                    urlParams.forEach((value, key) => {
+                        iframeSrc.searchParams.set(key, value);
+                    });
+                    iframe.src = iframeSrc.toString();
+                }
+            });
+        };
+        
+        // Call this function after iframes are loaded
+        setTimeout(addParamsToIframes, 1000);
+    });
+</script>
 </body>
 </html>
