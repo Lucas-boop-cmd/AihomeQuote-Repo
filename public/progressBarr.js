@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("🚀 Initializing progress bar...");
     updateProgressBar();
     
-    // Create overlay elements to capture clicks on the iframe area
+    // Create overlay elements that will update the progress bar AND trigger form navigation
     function createOverlayButtons() {
         console.log("🔲 Creating overlay buttons for form navigation...");
         const formContainers = document.querySelectorAll('#realtor-form-container, #customer-form-container');
@@ -97,10 +97,17 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make container position relative
             container.style.position = 'relative';
             
+            // Get the iframe to access its buttons
+            const iframe = container.querySelector('iframe');
+            if (!iframe) {
+                console.error("❌ No iframe found in container!");
+                return;
+            }
+            
             // Left side overlay for back button
             const leftOverlay = document.createElement('div');
             leftOverlay.className = 'form-nav-overlay left-overlay';
-            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; pointer-events: none; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;';
+            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;';
             leftOverlay.title = 'Previous';
             leftOverlay.id = 'prev-overlay';
             
@@ -112,80 +119,143 @@ document.addEventListener("DOMContentLoaded", function () {
             // Right side overlay for next button
             const rightOverlay = document.createElement('div');
             rightOverlay.className = 'form-nav-overlay right-overlay';
-            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; pointer-events: none; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;';
+            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;';
             rightOverlay.title = 'Next';
+            
+            // Click handler for the left overlay (Back)
+            leftOverlay.addEventListener('click', function(e) {
+                console.log("👈 Left overlay clicked");
+                
+                if (currentSlide > 1) {
+                    // Update our progress bar
+                    currentSlide--;
+                    updateProgressBar();
+                    
+                    // Try to trigger the back button in the iframe
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const backBtn = iframeDoc.querySelector('.ghl-footer-back, [class*="back"], .ghl-back-button');
+                        
+                        if (backBtn) {
+                            console.log("   🔍 Found back button in iframe, clicking it");
+                            backBtn.click();
+                        } else {
+                            console.log("   ⚠️ Couldn't find back button in iframe");
+                        }
+                    } catch (e) {
+                        console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
+                        // For cross-origin iframes, we'll need to use postMessage
+                        iframe.contentWindow.postMessage({ action: 'clickBack' }, '*');
+                    }
+                }
+            });
+            
+            // Click handler for the right overlay (Next)
+            rightOverlay.addEventListener('click', function(e) {
+                console.log("👉 Right overlay clicked");
+                
+                if (currentSlide < totalSlides) {
+                    // Update our progress bar
+                    currentSlide++;
+                    updateProgressBar();
+                    
+                    // Try to trigger the next button in the iframe
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const nextBtn = iframeDoc.querySelector('.ghl-footer-next, [class*="next"], .ghl-next-button');
+                        
+                        if (nextBtn) {
+                            console.log("   🔍 Found next button in iframe, clicking it");
+                            nextBtn.click();
+                        } else {
+                            console.log("   ⚠️ Couldn't find next button in iframe");
+                        }
+                    } catch (e) {
+                        console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
+                        // For cross-origin iframes, we'll need to use postMessage
+                        iframe.contentWindow.postMessage({ action: 'clickNext' }, '*');
+                    }
+                }
+            });
             
             container.appendChild(leftOverlay);
             container.appendChild(rightOverlay);
-            console.log("   ✅ Added visual overlays to container (pointer-events: none)");
             
-            // Find the actual iframe to attach our click handler
-            const iframe = container.querySelector('iframe');
-            if (iframe) {
-                console.log("   🔍 Found iframe in container, setting up message listener");
+            // Inject script into iframe to listen for our messages
+            injectIframeHelper(iframe);
+        });
+        
+        console.log("✅ Overlay buttons created successfully");
+    }
+
+    // Function to inject script into iframe to handle our click messages
+    function injectIframeHelper(iframe) {
+        // We need to wait for the iframe to load
+        iframe.addEventListener('load', function() {
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const script = document.createElement('script');
                 
-                // We'll update our progress bar based on form navigation from inside the iframe
-                // This doesn't rely on our overlays intercepting clicks
-                
-                // Set up an interval to check for iframe content load
-                const checkInterval = setInterval(() => {
-                    try {
-                        // Just try to access the iframe content to see if it's loaded and same-origin
-                        if (iframe.contentWindow && iframe.contentWindow.document) {
-                            clearInterval(checkInterval);
-                            
-                            try {
-                                // Set up click handlers on the actual form navigation buttons
-                                const iframeDoc = iframe.contentWindow.document;
-                                
-                                // We need to wait a bit for the form to initialize
-                                setTimeout(() => {
-                                    try {
-                                        console.log("   🔄 Attempting to add click handlers to form buttons inside iframe");
-                                        const nextButtons = iframeDoc.querySelectorAll('.ghl-footer-next, .ghl-next-button, [class*="next"]');
-                                        const backButtons = iframeDoc.querySelectorAll('.ghl-footer-back, .ghl-back-button, [class*="back"]');
-                                        
-                                        console.log(`   👉 Found ${nextButtons.length} next buttons and ${backButtons.length} back buttons`);
-                                        
-                                        // Add click listeners to the next buttons
-                                        nextButtons.forEach(btn => {
-                                            btn.addEventListener('click', () => {
-                                                console.log("   🔼 Next button clicked INSIDE iframe");
-                                                if (currentSlide < totalSlides) {
-                                                    currentSlide++;
-                                                    updateProgressBar();
-                                                }
-                                            });
-                                        });
-                                        
-                                        // Add click listeners to the back buttons
-                                        backButtons.forEach(btn => {
-                                            btn.addEventListener('click', () => {
-                                                console.log("   🔽 Back button clicked INSIDE iframe");
-                                                if (currentSlide > 1) {
-                                                    currentSlide--;
-                                                    updateProgressBar();
-                                                }
-                                            });
-                                        });
-                                    } catch (e) {
-                                        console.error("   ❌ Error adding click handlers to buttons:", e);
-                                    }
-                                }, 2000);
-                            } catch (e) {
-                                console.error("   ❌ Error accessing iframe content:", e);
+                script.innerHTML = `
+                    // Listen for messages from parent window
+                    window.addEventListener('message', function(event) {
+                        if (event.data && event.data.action) {
+                            if (event.data.action === 'clickNext') {
+                                console.log("📢 Received clickNext message from parent");
+                                // Find and click next button
+                                const nextBtn = document.querySelector('.ghl-footer-next, [class*="next"], .ghl-next-button');
+                                if (nextBtn) {
+                                    console.log("🖱️ Clicking next button in form");
+                                    nextBtn.click();
+                                }
+                            } else if (event.data.action === 'clickBack') {
+                                console.log("📢 Received clickBack message from parent");
+                                // Find and click back button
+                                const backBtn = document.querySelector('.ghl-footer-back, [class*="back"], .ghl-back-button');
+                                if (backBtn) {
+                                    console.log("🖱️ Clicking back button in form");
+                                    backBtn.click();
+                                }
                             }
                         }
-                    } catch (e) {
-                        // This is expected for cross-origin iframes
-                    }
-                }, 500);
+                    });
+                    
+                    // Also watch for form navigation to notify the parent
+                    document.addEventListener('click', function(e) {
+                        if (e.target.matches('.ghl-footer-next, [class*="next"], .ghl-next-button') || 
+                            e.target.closest('.ghl-footer-next, [class*="next"], .ghl-next-button')) {
+                            window.parent.postMessage({ type: 'formClicked', direction: 'next' }, '*');
+                        } else if (e.target.matches('.ghl-footer-back, [class*="back"], .ghl-back-button') || 
+                                   e.target.closest('.ghl-footer-back, [class*="back"], .ghl-back-button')) {
+                            window.parent.postMessage({ type: 'formClicked', direction: 'back' }, '*');
+                        }
+                    });
+                    
+                    console.log("🔌 Iframe helper script loaded");
+                `;
+                
+                iframeDoc.body.appendChild(script);
+                console.log("✅ Injected helper script into iframe");
+            } catch (e) {
+                // Expected for cross-origin iframes
+                console.log("❌ Could not inject script into iframe due to cross-origin restrictions");
             }
         });
         
-        console.log("✅ Overlay indicators created successfully");
+        // Also add a listener for form navigation events from the iframe
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'formClicked') {
+                if (event.data.direction === 'next' && currentSlide < totalSlides) {
+                    currentSlide++;
+                    updateProgressBar();
+                } else if (event.data.direction === 'back' && currentSlide > 1) {
+                    currentSlide--;
+                    updateProgressBar();
+                }
+            }
+        });
     }
-    
+
     // Update the original updateProgressBar function to control overlay visibility
     const originalUpdateProgressBar = updateProgressBar;
     updateProgressBar = function() {
@@ -236,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // Detect clicks on form navigation buttons or elements that look like navigation
         const target = e.target;
-        
+
         // Check if the click was inside an iframe
         const isInIframe = target.closest('iframe');
         if (isInIframe) {
@@ -299,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function () {
             updateProgressBar();
         }
     });
-    
+
     // Additional function to help with the iframe communication
     function addIframeMessageListener() {
         window.addEventListener('message', function(event) {
