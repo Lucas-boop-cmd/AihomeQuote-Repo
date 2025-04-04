@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Initial values
     let totalSlides = 5; // Default total slides
     let currentSlide = 1; // Will be derived from DOM
+    let lastHeight = 0; // Track iframe height changes
+    let pollActive = false;
 
     // Function to determine current slide by reading class "slide-no-X" from the visible slide element.
     function getCurrentSlideFromDOM() {
@@ -34,8 +36,78 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(`Progress updated: Step ${currentSlide} of ${totalSlides} (${progressPercentage}%)`);
     }
 
-    // Run initially
+    // Initialize polling of the iframe content
+    function startProgressPolling() {
+        if (pollActive) return; // Don't start polling twice
+        
+        pollActive = true;
+        console.log("Starting progress polling");
+        
+        // Poll every 500ms for changes
+        setInterval(() => {
+            const iframes = document.querySelectorAll('iframe');
+            
+            iframes.forEach(iframe => {
+                try {
+                    // Check if the iframe height has changed (often indicates slide change)
+                    if (iframe.clientHeight !== lastHeight && iframe.clientHeight > 0) {
+                        lastHeight = iframe.clientHeight;
+                        console.log(`Iframe height changed to ${lastHeight}px - checking slide`);
+                        
+                        // Try to detect current slide
+                        try {
+                            // Direct access (will fail with cross-origin)
+                            const doc = iframe.contentDocument || iframe.contentWindow.document;
+                            const visibleSlide = doc.querySelector('.form-builder--wrap-questions:not([style*="display: none"])');
+                            
+                            if (visibleSlide) {
+                                const match = visibleSlide.className.match(/slide-no-(\d+)/);
+                                if (match) {
+                                    currentSlide = parseInt(match[1], 10);
+                                    console.log("Poll detected slide change to:", currentSlide);
+                                    updateProgressBar();
+                                }
+                            }
+                        } catch (e) {
+                            // Cross-origin restriction - can't access iframe content directly
+                            // Instead, we'll update using a heuristic approach based on height changes
+                            
+                            // If we can't directly access the content, we'll make an educated guess
+                            // Height changes often indicate slide transitions
+                            if (iframe.clientHeight > 0) {
+                                // We don't update the currentSlide here, as this is just a hint
+                                // that something changed - instead we force a re-check
+                                console.log("Height change detected, forcing progress check");
+                                updateProgressBar();
+                            }
+                        }
+                    }
+                    
+                    // Also check URL hash changes, as some form systems use them for navigation
+                    if (iframe.contentWindow && iframe.contentWindow.location.hash) {
+                        const hash = iframe.contentWindow.location.hash;
+                        if (hash.includes('step') || hash.includes('page') || hash.includes('slide')) {
+                            console.log("URL hash changed in iframe:", hash);
+                            // Extract potential slide numbers from hash
+                            const match = hash.match(/\d+/);
+                            if (match) {
+                                currentSlide = parseInt(match[0], 10);
+                                console.log("Detected slide from hash:", currentSlide);
+                                updateProgressBar();
+                            }
+                        }
+                    }
+                } catch (e) {
+                    // This is expected due to cross-origin restrictions
+                    // Continue with other methods
+                }
+            });
+        }, 500);
+    }
+
+    // Run initially and start polling
     updateProgressBar();
+    startProgressPolling();
 
     // Set up a MutationObserver on the container holding the slides so that any change (e.g. new slide visible) triggers an update.
     const slidesContainer = document.querySelector('.form-builder--wrap-questions');
@@ -284,8 +356,31 @@ event.target.closest(".ghl-footer-back")) {
                 console.log("Unrecognized action:", event.data.action);
             }
             console.log("After handling message, currentSlide:", currentSlide, "totalSlides:", totalSlides);
+        } else if (event.data && typeof event.data === 'string' && event.data.includes('formSubmitted')) {
+            console.log("Form submitted detected, setting progress to 100%");
+            currentSlide = totalSlides;
+            updateProgressBar();
         } else {
             console.log("Received message without valid action:", event.data);
+        }
+    });
+
+    // Watch for form navigation buttons in the parent document too
+    document.addEventListener("click", function(event) {
+        // Check if this might be a form navigation button
+        const target = event.target;
+        if (target.tagName === 'BUTTON' || 
+            target.classList.contains('btn') || 
+            target.classList.contains('button') ||
+            target.closest('.ghl-footer-next-arrow') || 
+            target.closest('.ghl-footer-back')) {
+            
+            console.log("Potential form navigation clicked, checking for slide changes");
+            
+            // Check after a short delay to allow the form to update
+            setTimeout(() => {
+                updateProgressBar();
+            }, 300);
         }
     });
 });
