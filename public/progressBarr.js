@@ -97,13 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make container position relative
             container.style.position = 'relative';
             
-            // Get the iframe to access its buttons
-            const iframe = container.querySelector('iframe');
-            if (!iframe) {
-                console.error("❌ No iframe found in container!");
-                return;
-            }
-            
+            // Create overlays regardless of iframe presence
             // Left side overlay for back button
             const leftOverlay = document.createElement('div');
             leftOverlay.className = 'form-nav-overlay left-overlay';
@@ -131,22 +125,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     currentSlide--;
                     updateProgressBar();
                     
-                    // Try to trigger the back button in the iframe
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const backBtn = iframeDoc.querySelector('.ghl-footer-back, [class*="back"], .ghl-back-button');
-                        
-                        if (backBtn) {
-                            console.log("   🔍 Found back button in iframe, clicking it");
-                            backBtn.click();
-                        } else {
-                            console.log("   ⚠️ Couldn't find back button in iframe");
-                        }
-                    } catch (e) {
-                        console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
-                        // For cross-origin iframes, we'll need to use postMessage
-                        iframe.contentWindow.postMessage({ action: 'clickBack' }, '*');
-                    }
+                    // Try to simulateBackClick in all potential iframes
+                    document.querySelectorAll('iframe').forEach(iframe => {
+                        simulateBackClick(iframe);
+                    });
                 }
             });
             
@@ -159,33 +141,90 @@ document.addEventListener("DOMContentLoaded", function () {
                     currentSlide++;
                     updateProgressBar();
                     
-                    // Try to trigger the next button in the iframe
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const nextBtn = iframeDoc.querySelector('.ghl-footer-next, [class*="next"], .ghl-next-button');
-                        
-                        if (nextBtn) {
-                            console.log("   🔍 Found next button in iframe, clicking it");
-                            nextBtn.click();
-                        } else {
-                            console.log("   ⚠️ Couldn't find next button in iframe");
-                        }
-                    } catch (e) {
-                        console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
-                        // For cross-origin iframes, we'll need to use postMessage
-                        iframe.contentWindow.postMessage({ action: 'clickNext' }, '*');
-                    }
+                    // Try to simulateNextClick in all potential iframes
+                    document.querySelectorAll('iframe').forEach(iframe => {
+                        simulateNextClick(iframe);
+                    });
                 }
             });
             
             container.appendChild(leftOverlay);
             container.appendChild(rightOverlay);
             
-            // Inject script into iframe to listen for our messages
+            console.log("   ✅ Added visual overlays to container");
+        });
+        
+        // Monitor for iframes being added and inject helpers
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.tagName === 'IFRAME') {
+                            console.log("   🔍 New iframe detected, setting up helper");
+                            injectIframeHelper(node);
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Observe all form containers for changes
+        formContainers.forEach(container => {
+            observer.observe(container, { childList: true, subtree: true });
+        });
+        
+        // Also check for any existing iframes
+        document.querySelectorAll('iframe').forEach(iframe => {
             injectIframeHelper(iframe);
         });
         
         console.log("✅ Overlay buttons created successfully");
+    }
+
+    // Helper function to simulate clicking next button in iframe
+    function simulateNextClick(iframe) {
+        try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const nextBtn = iframeDoc.querySelector('.ghl-footer-next, [class*="next"], .ghl-next-button');
+            
+            if (nextBtn) {
+                console.log("   🔍 Found next button in iframe, clicking it");
+                nextBtn.click();
+            } else {
+                console.log("   ⚠️ Couldn't find next button in iframe");
+            }
+        } catch (e) {
+            console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
+            // For cross-origin iframes, we'll need to use postMessage
+            try {
+                iframe.contentWindow.postMessage({ action: 'clickNext' }, '*');
+            } catch (e2) {
+                console.error("   ❌ Error sending message to iframe:", e2);
+            }
+        }
+    }
+
+    // Helper function to simulate clicking back button in iframe
+    function simulateBackClick(iframe) {
+        try {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const backBtn = iframeDoc.querySelector('.ghl-footer-back, [class*="back"], .ghl-back-button');
+            
+            if (backBtn) {
+                console.log("   🔍 Found back button in iframe, clicking it");
+                backBtn.click();
+            } else {
+                console.log("   ⚠️ Couldn't find back button in iframe");
+            }
+        } catch (e) {
+            console.log("   ⚠️ Cross-origin restriction, couldn't access iframe content");
+            // For cross-origin iframes, we'll need to use postMessage
+            try {
+                iframe.contentWindow.postMessage({ action: 'clickBack' }, '*');
+            } catch (e2) {
+                console.error("   ❌ Error sending message to iframe:", e2);
+            }
+        }
     }
 
     // Function to inject script into iframe to handle our click messages
@@ -468,6 +507,18 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => {
         console.log("⏰ Timeout elapsed, creating overlay buttons now");
         createOverlayButtons();
+        
+        // Set additional timeout to check for iframes that may load after initial overlay creation
+        setTimeout(() => {
+            const iframes = document.querySelectorAll('iframe');
+            console.log(`🔍 Checking again for iframes... Found ${iframes.length} iframes`);
+            
+            if (iframes.length > 0) {
+                iframes.forEach(iframe => {
+                    injectIframeHelper(iframe);
+                });
+            }
+        }, 3000);
     }, 1000);
     
     setupKeyboardNavigation();
