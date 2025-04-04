@@ -100,14 +100,8 @@
         };
         
         // Display the appropriate form based on parameters
-        if (lo && lo.toLowerCase() === 'lucas') {
-            // Show customer form when lo=lucas is in the URL
-            customerForm.classList.remove('hidden');
-            loadingElement.classList.add('hidden');
-            
-            // Create the iframe with the appropriate form ID
-            createFormIframe(customerFormContainer, currentLeadFormId);
-        } else if (formType === 'realtor') {
+        // FIXED: Changed logic order to prioritize formType over lo parameter
+        if (formType === 'realtor') {
             // Show realtor form
             realtorForm.classList.remove('hidden');
             loadingElement.classList.add('hidden');
@@ -123,6 +117,14 @@
             // If a specific formId is provided in URL, it takes precedence
             const customerFormId = formId || currentLeadFormId;
             createFormIframe(customerFormContainer, customerFormId);
+        } else if (lo && lo.toLowerCase() === 'lucas') {
+            // FIXED: Only use this as a fallback when no formType is specified
+            // Show customer form when lo=lucas is in the URL and no formType specified
+            customerForm.classList.remove('hidden');
+            loadingElement.classList.add('hidden');
+            
+            // Create the iframe with the appropriate form ID
+            createFormIframe(customerFormContainer, currentLeadFormId);
         } else {
             // Show error if form type is not specified or invalid
             errorElement.querySelector('span').textContent = 'Invalid or missing form type.';
