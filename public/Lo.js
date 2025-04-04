@@ -49,8 +49,21 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the headshot image
         const headshot = document.getElementById('lo-headshot');
         if (headshot && loProfile.image) {
-            headshot.src = loProfile.image;
-            headshot.alt = loProfile.name;
+            // Check if image is valid before setting
+            const img = new Image();
+            img.onload = function() {
+                headshot.src = loProfile.image;
+                headshot.alt = loProfile.name;
+                headshot.style.display = 'block';
+            };
+            img.onerror = function() {
+                console.warn('Failed to load LO image:', loProfile.image);
+                headshot.style.display = 'none';
+            };
+            img.src = loProfile.image;
+        } else if (headshot) {
+            // No image available
+            headshot.style.display = 'none';
         }
 
         // Update the name
