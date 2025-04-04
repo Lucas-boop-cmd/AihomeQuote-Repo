@@ -97,10 +97,10 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make container position relative
             container.style.position = 'relative';
             
-            // Left side overlay for back button
+            // Left side overlay for back button - MOVED 60px LOWER
             const leftOverlay = document.createElement('div');
             leftOverlay.className = 'form-nav-overlay left-overlay';
-            leftOverlay.style.cssText = 'position: absolute; left: 0; top: 50%; width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;'; // Added visible border for debugging
+            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;'; // Moved 60px lower
             leftOverlay.title = 'Previous';
             leftOverlay.addEventListener('click', function(e) {
                 console.log("👈 Left overlay clicked, attempting to go back");
@@ -114,10 +114,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
             
-            // Right side overlay for next button
+            // Right side overlay for next button - MOVED 60px LOWER
             const rightOverlay = document.createElement('div');
             rightOverlay.className = 'form-nav-overlay right-overlay';
-            rightOverlay.style.cssText = 'position: absolute; right: 0; top: 50%; width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;'; // Added visible border for debugging
+            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;'; // Moved 60px lower
             rightOverlay.title = 'Next';
             rightOverlay.addEventListener('click', function(e) {
                 console.log("👉 Right overlay clicked, attempting to go forward");
