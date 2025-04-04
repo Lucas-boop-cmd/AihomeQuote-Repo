@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add more LO profiles here following the same format
     };
 
+    // Make loProfiles globally accessible for forms.html
+    window.loProfiles = loProfiles;
+
     // Get the LO parameter from the URL with validation
     function getLOParameter() {
         const urlParams = new URLSearchParams(window.location.search);
