@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     
                     // Set up click listeners for the form navigation buttons
                     document.addEventListener('click', function(e) {
-                        if (e.target.matches('.ghl-footer-next-arrow') || 
+                        if (e.target.matches('.ghl-btn ghl-footer-next') || 
                             e.target.closest('.ghl-footer-next-arrow')) {
                             console.log("Detected click on .ghl-footer-next-arrow inside iframe"); 
                             notifyParent('next');
