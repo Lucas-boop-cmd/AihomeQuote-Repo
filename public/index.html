@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>custom Realtor Card</title>
+    <title>AI Home Quote</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Added QR code library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -13,9 +15,9 @@
             <h1 class="text-3xl font-bold text-blue-600">AI Home Quote</h1>
         </header>
 
-        <!-- Cards Container with both LO and Realtor cards; both hidden initially -->
-        <div id="cards">
-            <!-- LO Card (from LoCard.html) -->
+        <!-- Main content area with both cards -->
+        <div id="cards-container">
+            <!-- Loan Officer Card -->
             <div id="lo-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <div class="flex flex-col md:flex-row items-center">
                     <div class="mb-6 md:mb-0 md:mr-8 relative">
@@ -35,16 +37,18 @@
                 </div>
             </div>
 
-            <!-- Realtor Card (from realtorCard.html) -->
+            <!-- Realtor Card -->
             <div id="realtor-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <div class="flex flex-col md:flex-row items-center">
-                    <div class="mb-4 md:mb-0 md:mr-6">
+                    <div class="mb-4 md:mb-0 md:mr-6 relative">
                         <img id="realtor-headshot" src="placeholder-image.jpg" alt="Realtor" class="w-32 h-32 rounded-full object-cover">
+                        <!-- Added QR code to Realtor card -->
+                        <img id="realtor-qr-code-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0id2hpdGUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TG9hZGluZyBRUiBjb2RlLi4uPC90ZXh0Pjwvc3ZnPg==" alt="QR Code" class="absolute bottom-0 right-0 w-12 h-12">
                     </div>
                     <div>
                         <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
                         <div id="contact-info">
-                            <!-- Contact information will be populated here -->
+                            <!-- Contact information will be populated here by Lo.js or app.js -->
                         </div>
                         <div class="mt-4">
                             <a href="#" id="find-out-button" class="primary-button inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
@@ -55,35 +59,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Dynamic content container for additional content injected by scripts -->
+        <div id="dynamic-content" class="mt-8">
+            <!-- Additional content will be inserted here by scripts if needed -->
+        </div>
     </div>
 
-    <!-- Include LO initialization if needed -->
+    <!-- Scripts -->
     <script data-cfasync="false" src="./Lo.js"></script>
+    <script data-cfasync="false" src="./app.js"></script>
+    <!-- Added QR Code script -->
+    <script data-cfasync="false" src="./qrCode.js"></script>
     
-    <!-- Conditional display script -->
+    <!-- Card display logic -->
     <script data-cfasync="false">
-    // When DOM is loaded, show the correct card based on URL parameters.
-    document.addEventListener("DOMContentLoaded", function(){
-        const params = new URLSearchParams(window.location.search);
-        const lo = params.get("lo");
-        const agent = params.get("agent");
-        // If LO parameter exists:
-        if(lo) {
-            if(agent) {
-                // Show Realtor card if agent exists alongside LO.
-                document.getElementById("realtor-card").style.display = "block";
-                document.getElementById("lo-card").style.display = "none";
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            const lo = params.get("lo");
+            const agent = params.get("agent");
+            
+            // Determine which card to show
+            if(lo) {
+                if(agent) {
+                    // Show Realtor card if both lo and agent parameters exist
+                    document.getElementById("realtor-card").style.display = "block";
+                    document.getElementById("lo-card").style.display = "none";
+                } else {
+                    // Show LO card if only lo parameter exists
+                    document.getElementById("lo-card").style.display = "block";
+                    document.getElementById("realtor-card").style.display = "none";
+                }
             } else {
-                // Show LO card if only LO parameter exists.
+                // Default: show LO card
                 document.getElementById("lo-card").style.display = "block";
                 document.getElementById("realtor-card").style.display = "none";
             }
-        } else {
-            // Default: show LO card.
-            document.getElementById("lo-card").style.display = "block";
-            document.getElementById("realtor-card").style.display = "none";
-        }
-    });
+        });
     </script>
 </body>
 </html>
