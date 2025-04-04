@@ -97,11 +97,18 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make container position relative
             container.style.position = 'relative';
             
-            // Left side overlay for back button - MOVED 60px LOWER
+            // Left side overlay for back button - MOVED 60px LOWER and WIDER (140px)
             const leftOverlay = document.createElement('div');
             leftOverlay.className = 'form-nav-overlay left-overlay';
-            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;'; // Moved 60px lower
+            leftOverlay.style.cssText = 'position: absolute; left: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed red; opacity: 0.2;'; // Wider
             leftOverlay.title = 'Previous';
+            leftOverlay.id = 'prev-overlay';
+            
+            // Hide the left overlay initially if we're on first slide
+            if (currentSlide === 1) {
+                leftOverlay.style.display = 'none';
+            }
+            
             leftOverlay.addEventListener('click', function(e) {
                 console.log("👈 Left overlay clicked, attempting to go back");
                 e.preventDefault();
@@ -109,15 +116,22 @@ document.addEventListener("DOMContentLoaded", function () {
                     currentSlide--;
                     console.log("  🔙 Decremented currentSlide to", currentSlide);
                     updateProgressBar();
+                    
+                    // Hide left overlay if we're now on the first slide
+                    if (currentSlide === 1) {
+                        document.querySelectorAll('.left-overlay').forEach(el => {
+                            el.style.display = 'none';
+                        });
+                    }
                 } else {
                     console.log("  ⛔ Already at first slide, cannot go back");
                 }
             });
             
-            // Right side overlay for next button - MOVED 60px LOWER
+            // Right side overlay for next button - MOVED 60px LOWER and WIDER (140px)
             const rightOverlay = document.createElement('div');
             rightOverlay.className = 'form-nav-overlay right-overlay';
-            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 80px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;'; // Moved 60px lower
+            rightOverlay.style.cssText = 'position: absolute; right: 0; top: calc(50% + 60px); width: 140px; height: 80px; z-index: 9998; cursor: pointer; transform: translateY(-50%); border: 2px dashed green; opacity: 0.2;'; // Wider
             rightOverlay.title = 'Next';
             rightOverlay.addEventListener('click', function(e) {
                 console.log("👉 Right overlay clicked, attempting to go forward");
@@ -126,6 +140,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     currentSlide++;
                     console.log("  🔜 Incremented currentSlide to", currentSlide);
                     updateProgressBar();
+                    
+                    // Show left overlay if we're no longer on the first slide
+                    if (currentSlide > 1) {
+                        document.querySelectorAll('.left-overlay').forEach(el => {
+                            el.style.display = 'block';
+                        });
+                    }
                 } else {
                     console.log("  ⛔ Already at last slide, cannot go further");
                 }
@@ -140,6 +161,17 @@ document.addEventListener("DOMContentLoaded", function () {
         
         console.log("✅ Overlay buttons created successfully");
     }
+    
+    // Update the original updateProgressBar function to control overlay visibility
+    const originalUpdateProgressBar = updateProgressBar;
+    updateProgressBar = function() {
+        originalUpdateProgressBar.apply(this, arguments);
+        
+        // After updating the progress bar, also update overlay visibility
+        document.querySelectorAll('.left-overlay').forEach(el => {
+            el.style.display = currentSlide > 1 ? 'block' : 'none';
+        });
+    };
     
     // Create keyboard event listeners for navigation
     function setupKeyboardNavigation() {
