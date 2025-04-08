@@ -225,6 +225,9 @@
             contactInfo.innerHTML = contactHtml;
         }
 
+        // Update social media links
+        updateRealtorSocialMedia(realtorData);
+
         // Show the realtor card
         const realtorCard = document.getElementById('realtor-card');
         if (realtorCard) {
@@ -235,6 +238,29 @@
         const loadingElement = document.getElementById('loading');
         if (loadingElement) {
             loadingElement.classList.add('hidden');
+        }
+    };
+
+    // Function to update realtor social media links
+    const updateRealtorSocialMedia = (realtorData) => {
+        // Update Facebook link
+        updateSocialLink('realtor-facebook', realtorData.facebookUrl);
+        
+        // Update Instagram link
+        updateSocialLink('realtor-instagram', realtorData.instagramUrl);
+        
+        // Update LinkedIn link
+        updateSocialLink('realtor-linkedin', realtorData.linkedinUrl);
+    };
+
+    // Helper function to update social media links
+    const updateSocialLink = (elementId, url) => {
+        const element = document.getElementById(elementId);
+        if (element && url) {
+            element.href = url;
+            element.style.display = 'inline-block';
+        } else if (element) {
+            element.style.display = 'none';
         }
     };
 

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Home Quote</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- QR code library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
     <!-- Load scripts with direct paths -->
@@ -31,6 +33,18 @@
                     <div class="text-center md:text-left">
                         <h2 id="lo-name" class="text-3xl font-bold mb-3">Loan Officer Name</h2>
                         <p id="lo-phone" class="text-gray-600 mb-4">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
+                        <!-- Add social media icons for LO -->
+                        <div id="lo-social-links" class="flex space-x-4 mb-4">
+                            <a id="lo-facebook" href="#" target="_blank" class="text-blue-600 hover:text-blue-800" style="display: none;">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                            <a id="lo-instagram" href="#" target="_blank" class="text-pink-600 hover:text-pink-800" style="display: none;">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                            <a id="lo-linkedin" href="#" target="_blank" class="text-blue-700 hover:text-blue-900" style="display: none;">
+                                <i class="fab fa-linkedin fa-lg"></i>
+                            </a>
+                        </div>
                         <p class="text-gray-700 mb-4">
                             Get your custom AI home quote card to preapprove your clients in seconds.
                         </p>
@@ -53,6 +67,18 @@
                         <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
                         <div id="contact-info">
                             <!-- Contact information will be populated here by Lo.js or app.js -->
+                        </div>
+                        <!-- Add social media icons for Realtor -->
+                        <div id="realtor-social-links" class="flex space-x-4 my-3">
+                            <a id="realtor-facebook" href="#" target="_blank" class="text-blue-600 hover:text-blue-800" style="display: none;">
+                                <i class="fab fa-facebook fa-lg"></i>
+                            </a>
+                            <a id="realtor-instagram" href="#" target="_blank" class="text-pink-600 hover:text-pink-800" style="display: none;">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                            <a id="realtor-linkedin" href="#" target="_blank" class="text-blue-700 hover:text-blue-900" style="display: none;">
+                                <i class="fab fa-linkedin fa-lg"></i>
+                            </a>
                         </div>
                         <div class="mt-4">
                             <a href="#" id="find-out-button" class="primary-button inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">

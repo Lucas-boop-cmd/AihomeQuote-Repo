@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
             name: "Lucas Hernandez",
             phone: "+1 954-495-6135",
             image: "https://storage.googleapis.com/msgsndr/h4BWchNdy6Wykng1FfTH/media/67eb0c4b95cc4563411f80f4.webp",
+            // Social media links
+            facebook: "https://facebook.com/lucashernandez",
+            instagram: "https://instagram.com/lucashernandez",
+            linkedin: "https://linkedin.com/in/lucashernandez",
             // Form IDs for different purposes
             realtorForm: "npOQeePCnk9G9Yyqau5U", // ID for form shown to realtors on forms page
             leadForm: "ZdxUZnijqVITonoQQHBQ",     // ID for customer lead form shown on realtor page
@@ -16,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
             name: "Brandon List", 
             phone: "+1 518-921-2058",
             image: "https://storage.googleapis.com/msgsndr/h4BWchNdy6Wykng1FfTH/media/67ed9062379294249af39069.png",
+            // Social media links
+            facebook: "https://facebook.com/brandonlist",
+            instagram: "https://instagram.com/brandonlist",
+            linkedin: "https://linkedin.com/in/brandonlist",
             // Form IDs for different purposes - replace with actual IDs
             realtorForm: "MhxejrTLnv86zrqvPoQu", // ID for form shown to realtors on forms page
             leadForm: "Aliw2dZU7xnLt0Pd5iKp",     // ID for customer lead form shown on realtor page
@@ -25,6 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
             name: "Sarah Johnson",
             phone: "+15559876543",
             image: "https://example.com/sarah-johnson.jpg",
+            // Social media links
+            facebook: "https://facebook.com/sarahjohnson",
+            instagram: "https://instagram.com/sarahjohnson",
+            linkedin: "https://linkedin.com/in/sarahjohnson",
             // Form IDs for different purposes - replace with actual IDs
             realtorForm: "your_realtor_form_id_for_sarah", // ID for form shown to realtors on forms page
             leadForm: "your_lead_form_id_for_sarah",        // ID for customer lead form shown on realtor page
@@ -85,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Update social media links
+        updateSocialMediaLinks('lo-facebook', loProfile.facebook);
+        updateSocialMediaLinks('lo-instagram', loProfile.instagram);
+        updateSocialMediaLinks('lo-linkedin', loProfile.linkedin);
+
         // Store form IDs in session storage for use in forms.html
         if (loProfile.realtorForm) {
             sessionStorage.setItem('currentRealtorForm', loProfile.realtorForm);
@@ -116,6 +133,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 window.location.href = `forms.html?${currentParams.toString()}`;
             });
+        }
+    }
+
+    // Helper function to update social media link visibility
+    function updateSocialMediaLinks(elementId, url) {
+        const element = document.getElementById(elementId);
+        if (element && url) {
+            element.href = url;
+            element.style.display = 'inline-block';
+        } else if (element) {
+            element.style.display = 'none';
         }
     }
 
