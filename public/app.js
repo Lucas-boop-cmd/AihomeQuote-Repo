@@ -191,33 +191,24 @@
         const name = document.getElementById('realtor-name');
         if (name) {
             name.textContent = `${realtorData.firstName} ${realtorData.lastName}`;
+            console.log('Updated realtor name:', `${realtorData.firstName} ${realtorData.lastName}`);
         }
 
-        // Update social media links - display as icons
-        const socialMediaDiv = document.getElementById('social-media-links');
-        if (socialMediaDiv) {
-            // Clear previous content
-            socialMediaDiv.innerHTML = '';
-            
-            // Add social media icons when available
-            if (realtorData.facebook) {
-                const facebookLink = createSocialLink(realtorData.facebook, 'facebook');
-                socialMediaDiv.appendChild(facebookLink);
-            }
-            
-            if (realtorData.instagram) {
-                const instagramLink = createSocialLink(realtorData.instagram, 'instagram');
-                socialMediaDiv.appendChild(instagramLink);
-            }
-            
-            if (realtorData.linkedin) {
-                const linkedinLink = createSocialLink(realtorData.linkedin, 'linkedin');
-                socialMediaDiv.appendChild(linkedinLink);
-            }
-            
-            // Show or hide the container based on whether any social links exist
-            socialMediaDiv.style.display = socialMediaDiv.childElementCount > 0 ? 'flex' : 'none';
-        }
+        // Update social media links using the existing HTML elements
+        console.log('Social media data:', {
+            facebook: realtorData.facebook,
+            instagram: realtorData.instagram,
+            linkedin: realtorData.linkedin
+        });
+        
+        // Update Facebook
+        updateSocialLink('realtor-facebook', realtorData.facebook);
+        
+        // Update Instagram
+        updateSocialLink('realtor-instagram', realtorData.instagram);
+        
+        // Update LinkedIn
+        updateSocialLink('realtor-linkedin', realtorData.linkedin);
 
         // Update contact info
         const contactInfo = document.getElementById('contact-info');
@@ -225,9 +216,11 @@
             let contactHtml = '';
             if (realtorData.email) {
                 contactHtml += `<p class="text-gray-600 mb-2">Email: <a href="mailto:${realtorData.email}" class="text-blue-600 hover:underline">${realtorData.email}</a></p>`;
+                console.log('Added email to contact info:', realtorData.email);
             }
             if (realtorData.phone) {
                 contactHtml += `<p class="text-gray-600 mb-2">Phone: <a href="tel:${realtorData.phone}" class="text-blue-600 hover:underline">${realtorData.phone}</a></p>`;
+                console.log('Added phone to contact info:', realtorData.phone);
             }
 
             // Add link to forms if the realtor has any
@@ -264,37 +257,27 @@
         }
     };
 
-    // Helper function to create a social media link with icon
-    const createSocialLink = (url, platform) => {
-        // Ensure URL has protocol
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            url = 'https://' + url;
+    // Helper function to update social media links
+    const updateSocialLink = (elementId, url) => {
+        const element = document.getElementById(elementId);
+        console.log(`Updating social link ${elementId}:`, url);
+        
+        if (element && url) {
+            // Ensure URL has protocol
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+                console.log(`Added protocol to URL: ${url}`);
+            }
+            
+            element.href = url;
+            element.style.display = 'inline-block';
+            console.log(`Successfully updated ${elementId} with URL: ${url}`);
+        } else if (element) {
+            element.style.display = 'none';
+            console.log(`Hiding ${elementId} due to missing URL`);
+        } else {
+            console.warn(`Element with ID ${elementId} not found in the document`);
         }
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.className = 'mx-1 text-gray-600 hover:text-gray-800';
-        
-        const icon = document.createElement('i');
-        
-        switch (platform) {
-            case 'facebook':
-                icon.className = 'fab fa-facebook fa-lg';
-                break;
-            case 'instagram':
-                icon.className = 'fab fa-instagram fa-lg';
-                break;
-            case 'linkedin':
-                icon.className = 'fab fa-linkedin fa-lg';
-                break;
-            default:
-                icon.className = 'fas fa-link fa-lg';
-        }
-        
-        link.appendChild(icon);
-        return link;
     };
 
     const showError = (message) => {
