@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
             instagram: "https://instagram.com/brandonlist",
             linkedin: "https://linkedin.com/in/brandonlist",
             // Form IDs for different purposes - replace with actual IDs
-            realtorForm: "MhxejrTLnv86zrqvPoQu", // ID for form shown to realtors on forms page
-            leadForm: "Aliw2dZU7xnLt0Pd5iKp",     // ID for customer lead form shown on realtor page
+            realtorForm: "npOQeePCnk9G9Yyqau5U", // ID for form shown to realtors on forms page
+            leadForm: "ZdxUZnijqVITonoQQHBQ",     // ID for customer lead form shown on realtor page
             apiUrl: "https://brandon-bluebubbles-middleware-jo7b.onrender.com" // API URL for Brandon
         },
         "sarah": {
