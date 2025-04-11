@@ -193,6 +193,32 @@
             name.textContent = `${realtorData.firstName} ${realtorData.lastName}`;
         }
 
+        // Update social media links - display as icons
+        const socialMediaDiv = document.getElementById('social-media-links');
+        if (socialMediaDiv) {
+            // Clear previous content
+            socialMediaDiv.innerHTML = '';
+            
+            // Add social media icons when available
+            if (realtorData.facebook) {
+                const facebookLink = createSocialLink(realtorData.facebook, 'facebook');
+                socialMediaDiv.appendChild(facebookLink);
+            }
+            
+            if (realtorData.instagram) {
+                const instagramLink = createSocialLink(realtorData.instagram, 'instagram');
+                socialMediaDiv.appendChild(instagramLink);
+            }
+            
+            if (realtorData.linkedin) {
+                const linkedinLink = createSocialLink(realtorData.linkedin, 'linkedin');
+                socialMediaDiv.appendChild(linkedinLink);
+            }
+            
+            // Show or hide the container based on whether any social links exist
+            socialMediaDiv.style.display = socialMediaDiv.childElementCount > 0 ? 'flex' : 'none';
+        }
+
         // Update contact info
         const contactInfo = document.getElementById('contact-info');
         if (contactInfo) {
@@ -225,9 +251,6 @@
             contactInfo.innerHTML = contactHtml;
         }
 
-        // Update social media links
-        updateRealtorSocialMedia(realtorData);
-
         // Show the realtor card
         const realtorCard = document.getElementById('realtor-card');
         if (realtorCard) {
@@ -241,37 +264,37 @@
         }
     };
 
-    // Function to update realtor social media links
-    const updateRealtorSocialMedia = (realtorData) => {
-        // Update Facebook link
-        updateSocialLink('realtor-facebook', realtorData.facebookUrl);
-        
-        // Update Instagram link
-        updateSocialLink('realtor-instagram', realtorData.instagramUrl);
-        
-        // Update LinkedIn link
-        updateSocialLink('realtor-linkedin', realtorData.linkedinUrl);
-    };
-
-    // Helper function to update social media links
-    const updateSocialLink = (elementId, url) => {
-        const element = document.getElementById(elementId);
-        if (element && url) {
-            element.href = url;
-            element.style.display = 'inline-block';
-        } else if (element) {
-            element.style.display = 'none';
+    // Helper function to create a social media link with icon
+    const createSocialLink = (url, platform) => {
+        // Ensure URL has protocol
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
         }
-    };
-
-    // Helper function to validate URLs
-    const isValidUrl = (string) => {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.className = 'mx-1 text-gray-600 hover:text-gray-800';
+        
+        const icon = document.createElement('i');
+        
+        switch (platform) {
+            case 'facebook':
+                icon.className = 'fab fa-facebook fa-lg';
+                break;
+            case 'instagram':
+                icon.className = 'fab fa-instagram fa-lg';
+                break;
+            case 'linkedin':
+                icon.className = 'fab fa-linkedin fa-lg';
+                break;
+            default:
+                icon.className = 'fas fa-link fa-lg';
         }
+        
+        link.appendChild(icon);
+        return link;
     };
 
     const showError = (message) => {
