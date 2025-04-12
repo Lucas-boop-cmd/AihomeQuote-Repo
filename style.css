@@ -58,6 +58,21 @@ h1, h2 {
     background-color: #4A9EAD !important;
 }
 
+/* Fix for CTA buttons - more specific selectors to override Tailwind */
+.primary-button,
+#get-card-button,
+#find-out-button {
+    background-color: #63B5C4 !important; 
+    color: white !important;
+    border: none !important;
+}
+
+.primary-button:hover,
+#get-card-button:hover,
+#find-out-button:hover {
+    background-color: #4A9EAD !important;
+}
+
 /* Override for regular buttons that need primary colors */
 a#get-card-button, a#find-out-button {
     background-color: #63B5C4 !important;
