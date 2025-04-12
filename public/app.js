@@ -377,6 +377,31 @@
         });
     };
 
+    // New function to adjust LO card headline font size to match button width
+    function adjustLOHeadlineFont() {
+        const headline = document.querySelector('#lo-card .primary-headline');
+        const button = document.getElementById('get-card-button');
+        if (!headline || !button) return;
+        const targetWidth = button.offsetWidth;
+        let fontSize = parseFloat(window.getComputedStyle(headline).fontSize);
+        
+        // Decrease font size if headline is too wide
+        while (headline.offsetWidth > targetWidth && fontSize > 10) {
+            fontSize -= 1;
+            headline.style.fontSize = fontSize + 'px';
+        }
+        // Increase font size as long as it fits
+        while (headline.offsetWidth < targetWidth && fontSize < 100) {
+            fontSize += 1;
+            headline.style.fontSize = fontSize + 'px';
+            if (headline.offsetWidth > targetWidth) {
+                fontSize -= 1;
+                headline.style.fontSize = fontSize + 'px';
+                break;
+            }
+        }
+    }
+
     if (agent) {
         // Show loading state
         const loadingElement = document.getElementById('loading');
@@ -389,6 +414,14 @@
         // When no agent parameter is found, show the default view
         showDefaultView();
     }
+
+    // Adjust LO headline font when DOM is loaded and on window resize
+    document.addEventListener("DOMContentLoaded", function() {
+        if (document.getElementById("lo-card").style.display !== "none") {
+            adjustLOHeadlineFont();
+        }
+        window.addEventListener("resize", adjustLOHeadlineFont);
+    });
 
     // Initialize the primary buttons when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', setupPrimaryButtons);
