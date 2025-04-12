@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "default": {
             name: "Lucas Hernandez",
             phone: "+1 954-495-6135",
+            email: "lucas@truratelending.com",
             image: "https://storage.googleapis.com/msgsndr/h4BWchNdy6Wykng1FfTH/media/67eb0c4b95cc4563411f80f4.webp",
             // Social media links
             facebook: "https://facebook.com/lucashernandez",
@@ -96,6 +97,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 phoneLink.href = `tel:${loProfile.phone}`;
                 phoneLink.textContent = loProfile.phone;
             }
+        }
+
+        // Update the email on the LO card
+        const emailElement = document.getElementById('lo-email');
+        if (emailElement && loProfile.email) {
+            emailElement.innerHTML = `Email: <a href="mailto:${loProfile.email}" class="text-blue-600 hover:underline">${loProfile.email}</a>`;
         }
 
         // Update social media links
