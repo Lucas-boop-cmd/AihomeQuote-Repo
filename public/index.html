@@ -184,23 +184,31 @@ Pre-Qualify your clients in Seconds
         document.addEventListener("DOMContentLoaded", function() {
             const params = new URLSearchParams(window.location.search);
             const lo = params.get("lo");
-            const agent = params.get("agent");
+            let agent = params.get("agent");
             
-            // Determine which card to show
-            if(lo) {
-                if(agent) {
-                    // Show Realtor card if both lo and agent parameters exist
-                    document.getElementById("realtor-card").style.display = "block";
-                    document.getElementById("lo-card").style.display = "none";
+            // If agent equals 'brandonlist', force display of LO card and update bullet text.
+            if (agent && agent.toLowerCase() === "brandonlist") {
+                document.getElementById("lo-card").style.display = "block";
+                document.getElementById("realtor-card").style.display = "none";
+                // Locate the LO card bullet that contains connection text and update it.
+                const loConnectBullet = document.querySelector("#lo-card .flex.flex-col.space-y-4 .flex.items-center:last-child span");
+                if (loConnectBullet) {
+                    loConnectBullet.textContent = "Instantly connect to me";
+                }
+            } else {
+                // Existing display logic
+                if(lo) {
+                    if(agent) {
+                        document.getElementById("realtor-card").style.display = "block";
+                        document.getElementById("lo-card").style.display = "none";
+                    } else {
+                        document.getElementById("lo-card").style.display = "block";
+                        document.getElementById("realtor-card").style.display = "none";
+                    }
                 } else {
-                    // Show LO card if only lo parameter exists
                     document.getElementById("lo-card").style.display = "block";
                     document.getElementById("realtor-card").style.display = "none";
                 }
-            } else {
-                // Default: show LO card
-                document.getElementById("lo-card").style.display = "block";
-                document.getElementById("realtor-card").style.display = "none";
             }
         });
     </script>
