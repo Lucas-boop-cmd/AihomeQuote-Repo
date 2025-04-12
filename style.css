@@ -25,7 +25,7 @@ body {
 }
 
 h1, h2 {
-    color: var(--text-color);
+    color: var(--primary-color);
 }
 
 .subtitle {
@@ -48,11 +48,7 @@ h1, h2 {
     background-color: var(--primary-dark);
 }
 
-.icon {
-    color: var(--primary-color);
-}
-
-/* Tailwind compatibility classes */
+/* Custom class for the CTA buttons */
 .primary-button {
     background-color: var(--primary-color) !important;
     color: #ffffff !important;
@@ -62,44 +58,29 @@ h1, h2 {
     background-color: var(--primary-dark) !important;
 }
 
-/* Style for the cards in index.html */
-#lo-card, #realtor-card {
-    background-color: var(--background-color);
-    border: 1px solid var(--border-color);
-}
-
-/* QR code container styling */
-.qr-container {
-    display: flex;
-    justify-content: center;
-}
-
-/* Feature item styling (for the image+text combinations) */
-.feature-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.feature-item img {
-    margin-right: 1rem;
-}
-
-/* Social media icons coloring */
-.social-icon {
-    color: var(--primary-color);
-}
-
-/* Additional text styling */
+/* Custom class for the headlines */
 .text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Style for social icons */
+.social-icon {
+    color: var(--primary-color) !important;
+    transition: color 0.3s ease;
+}
+
+.social-icon:hover {
+    color: var(--primary-dark) !important;
+}
+
+/* For all headings */
+h1, h2, h3 {
     color: var(--primary-color);
 }
 
-.text-secondary {
-    color: var(--subtext-color);
-}
-
-/* Make headings consistent */
-h1, h2, h3, h4 {
-    color: var(--text-color);
+/* QR code container */
+#qr-code-image, #realtor-qr-code-image {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 4px;
 }
