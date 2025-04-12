@@ -51,7 +51,6 @@ h1, h2 {
 /* Custom class for the CTA buttons */
 .primary-button {
     background-color: #63B5C4 !important;
-    color: #ffffff !important;
 }
 
 .primary-button:hover {
