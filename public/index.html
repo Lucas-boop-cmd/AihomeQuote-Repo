@@ -144,7 +144,7 @@ Pre-Qualify your clients in Seconds
                 <div class="flex flex-row-reverse items-start mb-6">
                     <!-- QR code on middle right - adjusted to align with first text line -->
                     <div class="ml-6 pt-1">
-                        <img id="realtor-qr-code-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0id2hpdGUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TG9hZGluZyBRUiBjb2RlLi4uPC90ZXh0Pjwvc3ZnPg==" alt="QR Code" class="w-32 h-32">
+                        <img id="realtor-qr-code-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgeG1sbjM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgZmlsbD0id2hpdGUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TG9hZGluZyBRUiBjb2RlLi4uPC90ZXh0Pjwvc3ZnPg==" alt="QR Code" class="w-32 h-32">
                     </div>
                     
                     <!-- Images with text replacing bullet points -->
@@ -186,14 +186,24 @@ Pre-Qualify your clients in Seconds
             const lo = params.get("lo");
             let agent = params.get("agent");
             
-            // If agent equals 'brandonlist', force display of LO card and update bullet text.
+            // If agent equals 'brandonlist', force display of LO card and update texts.
             if (agent && agent.toLowerCase() === "brandonlist") {
                 document.getElementById("lo-card").style.display = "block";
                 document.getElementById("realtor-card").style.display = "none";
-                // Locate the LO card bullet that contains connection text and update it.
+                // Update the LO card bullet text.
                 const loConnectBullet = document.querySelector("#lo-card .flex.flex-col.space-y-4 .flex.items-center:last-child span");
                 if (loConnectBullet) {
                     loConnectBullet.textContent = "Instantly connect to me";
+                }
+                // Update the call-to-action button text.
+                const ctaButton = document.getElementById("get-card-button");
+                if (ctaButton) {
+                    ctaButton.textContent = "Get Pre-Quilfied Now!";
+                }
+                // Update the big bold headline text.
+                const loHeadline = document.querySelector("#lo-card .primary-headline");
+                if (loHeadline) {
+                    loHeadline.textContent = "Get Pre-qualified in Seconds";
                 }
             } else {
                 // Existing display logic
