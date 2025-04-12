@@ -50,12 +50,21 @@ h1, h2 {
 
 /* Custom class for the CTA buttons */
 .primary-button {
-    background-color: var(--primary-color) !important;
+    background-color: #63B5C4 !important;
     color: #ffffff !important;
 }
 
 .primary-button:hover {
-    background-color: var(--primary-dark) !important;
+    background-color: #4A9EAD !important;
+}
+
+/* Override for regular buttons that need primary colors */
+a#get-card-button, a#find-out-button {
+    background-color: #63B5C4 !important;
+}
+
+a#get-card-button:hover, a#find-out-button:hover {
+    background-color: #4A9EAD !important;
 }
 
 /* Custom class for the headlines */
@@ -73,9 +82,19 @@ h1, h2 {
     color: var(--primary-dark) !important;
 }
 
-/* For all headings */
+/* For all headings - specifically updating for names and main headlines */
 h1, h2, h3 {
-    color: var(--primary-color);
+    color: #333333;
+}
+
+/* Specific selector for the loan officer name and realtor name */
+#lo-name, #realtor-name {
+    color: #333333;
+}
+
+/* Specific selector for the main headlines */
+h3.text-2xl {
+    color: #333333;
 }
 
 /* QR code container */
