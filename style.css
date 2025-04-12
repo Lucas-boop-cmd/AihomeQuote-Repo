@@ -1,0 +1,98 @@
+:root {
+    --primary-color: #63B5C4;   /* Soft teal blue */
+    --primary-dark: #4A9EAD;   /* Darker teal for hover states */
+    --text-color: #333333;     /* Dark gray for primary text */
+    --subtext-color: #666666;  /* Softer gray for secondary text */
+    --background-color: #ffffff; /* White background */
+    --border-color: #e0e0e0;   /* Light gray for separators */
+}
+
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+.card {
+    background-color: var(--background-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 24px;
+    max-width: 400px;
+    margin: auto;
+}
+
+h1, h2 {
+    color: var(--primary-color);
+}
+
+.subtitle {
+    color: var(--subtext-color);
+    font-size: 0.95em;
+}
+
+.button {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Consolidated CTA button styles */
+.primary-button,
+#get-card-button,
+#find-out-button,
+a#get-card-button {
+    background-color: #63B5C4 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.primary-button:hover,
+#get-card-button:hover,
+#find-out-button:hover,
+a#get-card-button:hover {
+    background-color: #4A9EAD !important;
+}
+
+/* Custom class for the headlines */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* For all headings - specifically updating for names and main headlines */
+h1, h2, h3 {
+    color: #333333;
+}
+
+/* Specific selector for the loan officer name and realtor name */
+#lo-name, #realtor-name {
+    color: #333333;
+}
+
+/* Specific selector for the main headlines */
+h3.text-2xl {
+    color: #333333;
+}
+
+/* QR code container */
+#qr-code-image, #realtor-qr-code-image {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+a[href^="mailto:"],
+a[href^="tel:"] {
+    color: #63B5C4 !important;
+}
