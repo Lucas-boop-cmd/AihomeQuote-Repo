@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "brandon": {
             name: "Brandon List", 
             phone: "+1 518-921-2058",
+            email: "Brandon@truratelending.com",
             image: "https://storage.googleapis.com/msgsndr/h4BWchNdy6Wykng1FfTH/media/67ed9062379294249af39069.png",
             // Social media links
             facebook: "https://facebook.com/brandonlist",
