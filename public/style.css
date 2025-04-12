@@ -91,3 +91,8 @@ h3.text-2xl {
     border-radius: 8px;
     padding: 4px;
 }
+
+a[href^="mailto:"],
+a[href^="tel:"] {
+    color: #63B5C4 !important;
+}
