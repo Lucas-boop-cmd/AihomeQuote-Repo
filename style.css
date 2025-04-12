@@ -87,16 +87,6 @@ a#get-card-button:hover, a#find-out-button:hover {
     color: var(--primary-color) !important;
 }
 
-/* Style for social icons */
-.social-icon {
-    color: var(--primary-color) !important;
-    transition: color 0.3s ease;
-}
-
-.social-icon:hover {
-    color: var(--primary-dark) !important;
-}
-
 /* For all headings - specifically updating for names and main headlines */
 h1, h2, h3 {
     color: #333333;
