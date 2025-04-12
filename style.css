@@ -1,0 +1,105 @@
+:root {
+    --primary-color: #63B5C4;   /* Soft teal blue */
+    --primary-dark: #4A9EAD;   /* Darker teal for hover states */
+    --text-color: #333333;     /* Dark gray for primary text */
+    --subtext-color: #666666;  /* Softer gray for secondary text */
+    --background-color: #ffffff; /* White background */
+    --border-color: #e0e0e0;   /* Light gray for separators */
+}
+
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+.card {
+    background-color: var(--background-color);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    padding: 24px;
+    max-width: 400px;
+    margin: auto;
+}
+
+h1, h2 {
+    color: var(--text-color);
+}
+
+.subtitle {
+    color: var(--subtext-color);
+    font-size: 0.95em;
+}
+
+.button {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: var(--primary-dark);
+}
+
+.icon {
+    color: var(--primary-color);
+}
+
+/* Tailwind compatibility classes */
+.primary-button {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+.primary-button:hover {
+    background-color: var(--primary-dark) !important;
+}
+
+/* Style for the cards in index.html */
+#lo-card, #realtor-card {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+}
+
+/* QR code container styling */
+.qr-container {
+    display: flex;
+    justify-content: center;
+}
+
+/* Feature item styling (for the image+text combinations) */
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.feature-item img {
+    margin-right: 1rem;
+}
+
+/* Social media icons coloring */
+.social-icon {
+    color: var(--primary-color);
+}
+
+/* Additional text styling */
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-secondary {
+    color: var(--subtext-color);
+}
+
+/* Make headings consistent */
+h1, h2, h3, h4 {
+    color: var(--text-color);
+}
