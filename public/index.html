@@ -16,9 +16,13 @@
     <script src="/app.js"></script>
     <script src="/qrCode.js"></script>
     <style>
-        /* auto adjust headline size to fit button width */
+        /* auto adjust headline size to fit button width, single line */
         .primary-headline {
+            width: 100%;
             font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
