@@ -48,36 +48,20 @@ h1, h2 {
     background-color: var(--primary-dark);
 }
 
-/* Custom class for the CTA buttons */
-.primary-button {
-    background-color: #63B5C4 !important;
-}
-
-.primary-button:hover {
-    background-color: #4A9EAD !important;
-}
-
-/* Fix for CTA buttons - more specific selectors to override Tailwind */
+/* Consolidated CTA button styles */
 .primary-button,
 #get-card-button,
-#find-out-button {
-    background-color: #63B5C4 !important; 
+#find-out-button,
+a#get-card-button {
+    background-color: #63B5C4 !important;
     color: white !important;
     border: none !important;
 }
 
 .primary-button:hover,
 #get-card-button:hover,
-#find-out-button:hover {
-    background-color: #4A9EAD !important;
-}
-
-/* Override for regular buttons that need primary colors */
-a#get-card-button, a#find-out-button {
-    background-color: #63B5C4 !important;
-}
-
-a#get-card-button:hover, a#find-out-button:hover {
+#find-out-button:hover,
+a#get-card-button:hover {
     background-color: #4A9EAD !important;
 }
 
