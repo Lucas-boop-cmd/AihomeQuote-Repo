@@ -15,6 +15,12 @@
     <script src="/Lo.js"></script>
     <script src="/app.js"></script>
     <script src="/qrCode.js"></script>
+    <style>
+        /* auto adjust headline size to fit button width */
+        .primary-headline {
+            font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
@@ -49,12 +55,12 @@
                     <div class="flex-1 pt-1">
                         <h2 id="lo-name" class="text-2xl font-bold mb-2">Loan Officer Name</h2>
                         <p id="lo-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
-                        <p class="text-gray-600 text-sm mb-2">your are trusted loan officer</p>
+                        <p class="text-gray-600 text-sm mb-2">Your trusted loan officer</p>
                     </div>
                 </div>
                 
                 <!-- Bold headline underneath (reduced size by ~15%) -->
-                <h3 class="w-full text-2xl font-bold text-center my-5">Pre-Qualify in Seconds</h3>
+                <h3 class="w-full primary-headline font-bold text-center my-5">Pre-Qualify your clients in Seconds</h3>
                 
                 <!-- Middle section with QR code on right -->
                 <div class="flex flex-row-reverse items-start mb-6">
@@ -121,7 +127,7 @@
                 </div>
                 
                 <!-- Bold headline underneath (reduced size by ~15%) -->
-                <h3 class="w-full text-2xl font-bold text-center my-5">Get Pre-Qualifed in Seconds</h3>
+                <h3 class="w-full primary-headline font-bold text-center my-5">Get Pre-Qualifed in Seconds</h3>
                 
                 <!-- Middle section with QR code on right -->
                 <div class="flex flex-row-reverse items-start mb-6">
