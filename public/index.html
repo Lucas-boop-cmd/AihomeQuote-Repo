@@ -41,7 +41,6 @@ white-space: nowrap;
                 <div class="flex flex-row items-start mb-6">
                     <!-- Updated headshot container (15% larger) -->
                     <div class="mr-6 relative flex flex-col items-center" style="width: 100px;">
-<!-- Changed from w-24/h-24 to w-28/h-28 -->
                         <img id="lo-headshot" alt="Loan Officer" class="w-28 h-28 rounded-full object-cover shadow-md mb-2">
                         <!-- Social media icons moved under headshot -->
                         <div id="lo-social-links" class="flex justify-center space-x-2">
@@ -56,11 +55,13 @@ white-space: nowrap;
                             </a>
                         </div>
                     </div>
-                    <!-- Updated text container with 10% increased font size -->
-                    <div class="flex-1 pt-1" style="font-size:1.1em;">
-                        <h2 id="lo-name" class="text-2xl font-bold mb-2">Loan Officer Name</h2>
-                        <p id="lo-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
-                        <p class="text-gray-600 text-sm mb-2">Your trusted loan officer</p>
+                    <!-- Updated text container split into two vertical parts -->
+                    <div class="flex-1 pt-1 flex flex-col justify-between" style="font-size:1.1em; min-height: 100px;">
+                        <div>
+                            <h2 id="lo-name" class="text-2xl font-bold mb-2">Loan Officer Name</h2>
+                            <p id="lo-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
+                        </div>
+                        <p class="text-gray-600 text-sm">Your trusted loan officer</p>
                     </div>
                 </div>
                 
@@ -88,7 +89,7 @@ Pre-Qualify your clients in Seconds
                         </div>
                         <div class="flex items-center">
                             <img src="https://storage.googleapis.com/msgsndr/fUCkalClqTbwivZfj3bN/media/67fac48171384bbc0bb1d2de.webp" alt="Connect" class="w-7 h-7 mr-3">
-                            <span class="text-gray-700" style="font-size:110%;">Instantly connect to my loan officer</span>
+                            <span class="text-gray-700" style="font-size:110%;">Instantly connect Your clients to me</span>
                         </div>
                     </div>
                 </div>
@@ -122,14 +123,15 @@ Pre-Qualify your clients in Seconds
                         </div>
                     </div>
                     
-                    <!-- Name and contact on right -->
-                    <div class="flex-1 pt-1">
-                        <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
-                        <div id="contact-info" class="text-sm">
-                            <!-- Added phone number so that the trusted line is positioned underneath -->
-                            <p id="realtor-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
-                            <p class="text-gray-600 text-sm mb-2">Your trusted Real Estate Agent</p>
+                    <!-- Name and contact on right, split into two vertical parts -->
+                    <div class="flex-1 pt-1 flex flex-col justify-between" style="min-height: 100px;">
+                        <div>
+                            <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
+                            <div id="contact-info" class="text-sm">
+                                <p id="realtor-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
+                            </div>
                         </div>
+                        <p class="text-gray-600 text-sm">Your trusted Real Estate Agent</p>
                     </div>
                 </div>
                 
@@ -150,12 +152,12 @@ Pre-Qualify your clients in Seconds
                             <span class="text-gray-700" style="font-size:110%;">Find the best loan options</span>
                         </div>
                         <div class="flex items-center">
-                            <img src="https://storage.googleapis.com/msgsndr/fUCkalClqTbwivZfj3bN/media/67fac48171384bd19fb1d2dd.webp" alt="Affordability" class="w-6 h-6 mr-3">
-                            <span class="text-gray-700">Know your affordability</span>
+                            <img src="https://storage.googleapis.com/msgsndr/fUCkalClqTbwivZfj3bN/media/67fac48171384bd19fb1d2dd.webp" alt="Affordability" class="w-7 h-7 mr-3">
+                            <span class="text-gray-700" style="font-size:110%;">Know your affordability</span>
                         </div>
                         <div class="flex items-center">
-                            <img src="https://storage.googleapis.com/msgsndr/fUCkalClqTbwivZfj3bN/media/67fac48171384bbc0bb1d2de.webp" alt="Connect" class="w-6 h-6 mr-3">
-                            <span class="text-gray-700">Instantly connect to my loan officer</span>
+                            <img src="https://storage.googleapis.com/msgsndr/fUCkalClqTbwivZfj3bN/media/67fac48171384bbc0bb1d2de.webp" alt="Connect" class="w-7 h-7 mr-3">
+                            <span class="text-gray-700" style="font-size:110%;">Instantly connect to my loan officer</span>
                         </div>
                     </div>
                 </div>
