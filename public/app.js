@@ -215,11 +215,11 @@
         if (contactInfo) {
             let contactHtml = '';
             if (realtorData.email) {
-                contactHtml += `<p class="text-gray-600 mb-2">Email: <a href="mailto:${realtorData.email}" class="text-blue-600 hover:underline">${realtorData.email}</a></p>`;
+                contactHtml += `<p class="text-gray-600 text-sm mb-2">Email: <a href="mailto:${realtorData.email}" class="text-blue-600 hover:underline">${realtorData.email}</a></p>`;
                 console.log('Added email to contact info:', realtorData.email);
             }
             if (realtorData.phone) {
-                contactHtml += `<p class="text-gray-600 mb-2">Phone: <a href="tel:${realtorData.phone}" class="text-blue-600 hover:underline">${realtorData.phone}</a></p>`;
+                contactHtml += `<p class="text-gray-600 text-sm mb-2">Phone: <a href="tel:${realtorData.phone}" class="text-blue-600 hover:underline">${realtorData.phone}</a></p>`;
                 console.log('Added phone to contact info:', realtorData.phone);
             }
 
