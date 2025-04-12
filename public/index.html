@@ -26,17 +26,12 @@
             <!-- Loan Officer Card - REDESIGNED -->
             <div id="lo-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <!-- Top section with headshot and contact info -->
-                <div class="flex flex-row-reverse items-start mb-6">
-                    <!-- Headshot in top right -->
-                    <div class="ml-6 relative">
-                        <img id="lo-headshot" alt="Loan Officer" class="w-32 h-32 rounded-full object-cover shadow-md">
-                    </div>
-                    <!-- Name and contact info on left -->
-                    <div class="flex-1">
-                        <h2 id="lo-name" class="text-2xl font-bold mb-2">Loan Officer Name</h2>
-                        <p id="lo-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
-                        <!-- Social media icons -->
-                        <div id="lo-social-links" class="flex space-x-4 mb-3">
+                <div class="flex flex-row items-start mb-6">
+                    <!-- Headshot in top left with social icons underneath -->
+                    <div class="mr-6 relative">
+                        <img id="lo-headshot" alt="Loan Officer" class="w-32 h-32 rounded-full object-cover shadow-md mb-3">
+                        <!-- Social media icons moved under headshot -->
+                        <div id="lo-social-links" class="flex justify-center space-x-3">
                             <a id="lo-facebook" href="#" target="_blank" class="text-blue-600 hover:text-blue-800" style="display: none;">
                                 <i class="fab fa-facebook fa-lg"></i>
                             </a>
@@ -48,10 +43,15 @@
                             </a>
                         </div>
                     </div>
+                    <!-- Name and contact info on right -->
+                    <div class="flex-1">
+                        <h2 id="lo-name" class="text-2xl font-bold mb-2">Loan Officer Name</h2>
+                        <p id="lo-phone" class="text-gray-600 text-sm mb-2">Phone: <a href="tel:" class="text-blue-600 hover:underline"></a></p>
+                    </div>
                 </div>
                 
-                <!-- Bold headline underneath -->
-                <h3 class="text-3xl font-bold text-center text-blue-700 my-5">Pre-Qualify in Seconds</h3>
+                <!-- Bold headline underneath (reduced size by ~15%) -->
+                <h3 class="text-2xl font-bold text-center text-blue-700 my-5">Pre-Qualify in Seconds</h3>
                 
                 <!-- Middle section with QR code on right -->
                 <div class="flex flex-row-reverse items-center mb-6">
@@ -82,19 +82,11 @@
             <div id="realtor-card" style="display: none;" class="bg-white rounded-lg shadow-lg p-6 mt-4">
                 <!-- Top section with headshot and contact info -->
                 <div class="flex flex-row items-start mb-6">
-                    <!-- Headshot in top left -->
+                    <!-- Headshot in top left with social icons underneath -->
                     <div class="mr-6 relative">
-                        <img id="realtor-headshot" src="placeholder-image.jpg" alt="Realtor" class="w-32 h-32 rounded-full object-cover shadow-md">
-                    </div>
-                    
-                    <!-- Name and contact on right -->
-                    <div class="flex-1">
-                        <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
-                        <div id="contact-info" class="text-sm">
-                            <!-- Contact information will be populated here by Lo.js or app.js -->
-                        </div>
-                        <!-- Social media icons -->
-                        <div id="realtor-social-links" class="flex space-x-4 my-3">
+                        <img id="realtor-headshot" src="placeholder-image.jpg" alt="Realtor" class="w-32 h-32 rounded-full object-cover shadow-md mb-3">
+                        <!-- Social media icons moved under headshot -->
+                        <div id="realtor-social-links" class="flex justify-center space-x-3">
                             <a id="realtor-facebook" href="#" target="_blank" class="text-blue-600 hover:text-blue-800" style="display: none;">
                                 <i class="fab fa-facebook fa-lg"></i>
                             </a>
@@ -106,10 +98,18 @@
                             </a>
                         </div>
                     </div>
+                    
+                    <!-- Name and contact on right -->
+                    <div class="flex-1">
+                        <h2 id="realtor-name" class="text-2xl font-bold mb-2">Realtor Name</h2>
+                        <div id="contact-info" class="text-sm">
+                            <!-- Contact information will be populated here by Lo.js or app.js -->
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Bold headline underneath -->
-                <h3 class="text-3xl font-bold text-center text-blue-700 my-5"> Get Pre-Qualified in Seconds</h3>
+                <!-- Bold headline underneath (reduced size by ~15%) -->
+                <h3 class="text-2xl font-bold text-center text-blue-600 my-5">Get Pre-Qualified in Seconds</h3>
                 
                 <!-- Middle section with QR code on right -->
                 <div class="flex flex-row-reverse items-center mb-6">
