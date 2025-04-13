@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
             instagram: "https://instagram.com/lucashernandez",
             linkedin: "https://linkedin.com/in/lucashernandez",
             // Form IDs for different purposes
-            realtorForm: "npOQeePCnk9G9Yyqau5U", // ID for form shown to realtors on forms page
-            leadForm: "ZdxUZnijqVITonoQQHBQ",     // ID for customer lead form shown on realtor page
+            realtorForm: "MhxejrTLnv86zrqvPoQu", // ID for form shown to realtors on forms page
+            leadForm: "Aliw2dZU7xnLt0Pd5iKp",     // ID for customer lead form shown on realtor page
             apiUrl: "https://bluebubbles-middleware.onrender.com" // API URL for Lucas
         },
         // Example additional profiles - add more as needed
