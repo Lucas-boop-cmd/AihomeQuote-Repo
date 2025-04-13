@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- ...existing styles... -->
+</head>
+<body class="flex items-center justify-center min-h-screen bg-white">
+    <div class="text-center p-8">
+        <h1 class="text-4xl font-bold mb-4">Thank You!</h1>
+        <h2 id="subheadline" class="text-xl mb-8"></h2>
+        <p class="text-gray-700">We appreciate you reaching out to us. We will be in touch shortly.</p>
+        <p id="phone-message" class="text-lg font-semibold mt-4">Processing your request...</p>
+    </div>
+    <script>
+        // Capture all URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Store important parameters in sessionStorage for the JS file to use
+        if (urlParams.get('leadFormId')) {
+            sessionStorage.setItem('currentLeadForm', urlParams.get('leadFormId'));
+        } else if (urlParams.get('formId')) {
+            sessionStorage.setItem('currentLeadForm', urlParams.get('formId'));
+        }
+        
+        // Dynamically set subheadline based on the "form" parameter.
+        const formType = urlParams.get('form');
+        const subheadline = document.getElementById('subheadline');
+        if (formType === 'realtor') {
+            subheadline.textContent = "Thank you for contacting your trusted realtor.";
+        } else if (formType === 'customer' || formType === 'lead') {
+            subheadline.textContent = "Thank you for your interest. A trusted loan officer will contact you soon.";
+        } else {
+            subheadline.textContent = "Thank you for getting in touch.";
+        }
+        
+        // Determine form type and display appropriate message
+        const phoneMessageElement = document.getElementById("phone-message");
+        const currentFormId = sessionStorage.getItem('currentLeadForm');
+        
+        // Load the LO.js script first to access loProfiles
+        function loadScript(url, callback) {
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = callback;
+            document.head.appendChild(script);
+        }
+        
+        loadScript('Lo.js', function() {
+            setTimeout(function() {
+                // Access loProfiles after it's been defined by Lo.js
+                if (window.loProfiles) {
+                    let isRealtorForm = false;
+                    let isLeadForm = false;
+                    
+                    // Check against all LO profiles
+                    for (const key in window.loProfiles) {
+                        const profile = window.loProfiles[key];
+                        
+                        if (profile.realtorForm === currentFormId) {
+                            isRealtorForm = true;
+                            break;
+                        }
+                        
+                        if (profile.leadForm === currentFormId) {
+                            isLeadForm = true;
+                            break;
+                        }
+                    }
+                    
+                    // Set appropriate message
+                    if (isRealtorForm) {
+                        phoneMessageElement.textContent = "You will get a message from me shortly with your new custom domain!";
+                    } else if (isLeadForm || formType === 'lead' || formType === 'customer') {
+                        phoneMessageElement.textContent = "Please wait for the pop-up then copy and paste the message into your message app.";
+                    }
+                }
+            }, 100); // Small delay to ensure loProfiles is loaded
+        });
+    </script>
+    
+    <!-- Include the thank-you-page.js that handles the mapping and SMS triggering -->
+    <script src="thank-you-page.js"></script>
+</body>
+</html>
